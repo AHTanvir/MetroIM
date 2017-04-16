@@ -474,8 +474,7 @@ switch($action)
 	if($userphone !=null)
 	{
 		$sql="select date,  (NOW()-date) as authenticateTimeDifference 
-		from users where phone='".$_REQUEST['friendphone']."' ";"
-		update users set date=NOW() where phone='".$phone."'";
+		from users where phone='".$_REQUEST['friendphone']."' ";
 		//$sql= "select authenticationTime,  (NOW()-authenticationTime) as authenticateTimeDifference from users where phone='".$_REQUEST['friendphone']."'";
 		if($d=$db->query($sql))
 		{
@@ -487,9 +486,11 @@ switch($action)
 			else{
 				$out=$res->date;
 			}
-				
+
 		}
 		else $out=FAILED;
+		$qSql="update users set date = NOW() where phone='".$userphone."'";
+		$db->query($qSql);
 	}
 	else $out=FAILED;
 	break;
@@ -521,7 +522,7 @@ function authenticateUser($db, $phone, $password)
 		{
 				$out = $row22->phone;
 
-				$sql22 = "update users set date = NOW(),
+				$sql22 = "update users set authenticationTime = NOW(),
 																 IP = '".$_SERVER["REMOTE_ADDR"]."' ,
 																 port = 15145
 								where phone= ".$row22->phone."

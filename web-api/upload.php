@@ -7,7 +7,7 @@
  $server_ip=$_SERVER['SERVER_ADDR'];
  $location = "upload2/";
  move_uploaded_file($temp_name, $location.$file_name);
-  echo 'http://'.$server_ip.'/upload/upload2/'.$file_name;
+  echo 'http://'.$server_ip.'/metroim/upload2/'.$file_name;
     //echo "http://www.simplifiedcoding.16mb.com/VideoUpload/uploads/".$file_name;
  }else{
  echo "Error";
