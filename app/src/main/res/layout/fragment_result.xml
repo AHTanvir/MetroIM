@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/table_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/resultfrag_cus_toolbar"></include>
+    </android.support.design.widget.AppBarLayout>
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/resultrecyclerView"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    </android.support.v7.widget.RecyclerView>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_back"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="top|start"
+        android:visibility="gone"
+        android:layout_margin="10dp"
+        app:backgroundTint="@color/colorPrimary"
+        app:srcCompat="@drawable/back_icon_arrow"/>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabadd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="21dp"
+        app:backgroundTint="@color/colorPrimary"
+        app:srcCompat="@android:drawable/ic_menu_add" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabcgpa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="21dp"
+        app:backgroundTint="@color/colorPrimary"
+        app:srcCompat="@android:drawable/ic_menu_myplaces" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabmenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="21dp"
+        app:backgroundTint="@color/colorPrimary"
+        app:srcCompat="@drawable/menu_icon"/>
+
+</android.support.design.widget.CoordinatorLayout >

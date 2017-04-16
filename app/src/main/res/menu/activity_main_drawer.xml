@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+        <item
+            android:id="@+id/msg_Backup"
+            android:title="Backup" />
+        <item
+            android:id="@+id/nav_donation_result"
+            android:title="Result" />
+        <item
+            android:id="@+id/nav_blood_donor"
+            android:title="Blood Donor" />
+        <item
+            android:id="@+id/nav_setting"
+            android:title="Account Setting" />
+        <item
+            android:id="@+id/nav_logout"
+            android:title="LogOut" />
+
+
+</menu>

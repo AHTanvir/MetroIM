@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="left"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/custon_acbar_textview"
+        android:text="AH Tanvir1"
+        android:layout_marginLeft="10dp"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_gravity="left"
+        android:layout_alignParentLeft="true"
+        android:foregroundGravity="top|left"
+        android:gravity="top|left"
+        />
+    <TextView
+        android:id="@+id/custom_acbar_lastseen"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_alignTop="@+id/custon_acbar_textview"
+        android:layout_marginLeft="10dp"
+        android:text="Last seen"
+        android:textColor="#343434"
+        android:textSize="14sp"
+        android:gravity="bottom"/>
+
+</RelativeLayout>

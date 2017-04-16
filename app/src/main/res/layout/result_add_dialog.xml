@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/cardview_dark_background"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="Subject:" />
+
+        <EditText
+            android:id="@+id/add_resultSubject"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
+            android:imeOptions="actionDone"
+
+            android:inputType="text"
+            android:singleLine="true" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="Credit:" />
+
+        <EditText
+            android:id="@+id/add_resultCredit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:singleLine="true" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="GPA:" />
+
+        <EditText
+            android:id="@+id/add_resultGpa"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:singleLine="true" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/add_result_OkButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:popupBackground="#579073"
+            android:text="Insert" />
+        <Button
+            android:id="@+id/add_result_calcelButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:popupBackground="#579073"
+            android:text="Cancel" />
+    </LinearLayout>
+
+</LinearLayout>

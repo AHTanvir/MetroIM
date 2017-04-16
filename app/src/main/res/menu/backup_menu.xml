@@ -1,0 +1,40 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+    <item android:id="@+id/action_create"
+        android:title="upload"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_upload"/>
+
+    <item android:id="@+id/action_list"
+        android:title="download"
+        android:orderInCategory="200"
+        app:showAsAction="always"
+        android:icon="@android:drawable/stat_sys_download"/>
+
+    <item android:id="@+id/action_delete"
+        android:title="delete"
+        android:orderInCategory="300"
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_delete"/>
+
+    <item android:id="@+id/action_cre_act"
+        android:title="action_create_act"
+        android:orderInCategory="400"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/action_pick_act"
+        android:title="pick_act"
+        android:orderInCategory="500"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/action_account"
+        android:title="action_account"
+        app:showAsAction="never"
+        android:orderInCategory="999" />
+
+</menu>
