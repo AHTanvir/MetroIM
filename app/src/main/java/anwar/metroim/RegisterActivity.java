@@ -46,7 +46,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private static final String SERVER_RES_RES_SIGN_UP_SUCCESFULL = "1";
     private static final String SERVER_RES_SIGN_UP_USERNAME_CRASHED = "2";
     private  Spinner spinner_type;
-    private String vCode="10";
+    private String vCode;
     private AutoCompleteTextView tf_dept,tf_batch;
     private Button btn_singup,resend,ok;
     private EditText tf_name,tf_email,tf_password,tf_id,tf_phone,veri_code;
@@ -124,10 +124,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         Toast.makeText(RegisterActivity.this, "NothingSelected", Toast.LENGTH_SHORT).show();
 
     }
-    public void texxt(){
-        Toast.makeText(RegisterActivity.this, "local service stop",Toast.LENGTH_SHORT).show();
-        tf_name.setText("ssddddd");
-    }
 
     public void onClick(View view){
        switch (view.getId())
@@ -135,23 +131,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
            case R.id.btn_singup:
                if(tf_phone.length()>=0 && tf_id.length()>=0 && tf_password.length()>=0 )
                 {
-                 /*   new Thread(new Runnable() {
-                        final Handler h=new Handler();
-                        @Override
-                        public void run() {
-                            vCode =man_ger.send_Sms(tf_phone.getText().toString());
-                            h.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if(vCode.equals("0"))
-                                    {
-                                        Toast.makeText(getApplicationContext(), "Check your Phone number and try Again", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else ShowDialog();
-                                }
-                            });
-                        }
-                    }).start();*/
                     ShowDialog();
                 }
                else {
