@@ -86,13 +86,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btn_register=(Button)findViewById(R.id.btn_register);
         btn_login.setOnClickListener(this);
         btn_register.setOnClickListener(this);
-        login_phone.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                login_phone.setText(iphoneContacts.getPrefixCountyCode(context));
-                return false;
-            }
-        });
+        login_phone.setText(iphoneContacts.getPrefixCountyCode(context));
+        // For android 6 or above version i just set  targetSdkVersion 22 so android os manage all dangerous permisson
       /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
             Intent intent=new Intent(LoginActivity.this, MultiplePermissions.class);

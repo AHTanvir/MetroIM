@@ -93,29 +93,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         btn_singup.setOnClickListener(this);
         addItemOnSpinner();
         ///
-        tf_name.setText("ANwar husentt");
-        tf_email.setText("anwarhusen@msn.com");
-        tf_phone.setText("+8801736549423");
-        tf_password.setText("anwar");
-        tf_id.setText("1235155555");
-        tf_batch.setText("29th");
-        tf_dept.setText("cse");
         spinner_type.setOnItemSelectedListener(this);
-        tf_phone.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                tf_phone.setText(iphoneContacts.getPrefixCountyCode(context));
-                return false;
-            }
-        });
+        tf_phone.setText(iphoneContacts.getPrefixCountyCode(context));
     }
 
 
     public void addItemOnSpinner(){
-        List<String>list=new ArrayList<String>();
+        List<String>list=new ArrayList<>();
         list.add("Student");
         list.add("Teacher");
-        ArrayAdapter adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,list);
+        ArrayAdapter adapter=new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,list);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_type.setAdapter(adapter);
     }
