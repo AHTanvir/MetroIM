@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             // Because it is running in our same process, we should never
             // see this happen.
             man_ger= null;
-            Toast.makeText(LoginActivity.this, "loooog",
+            Toast.makeText(LoginActivity.this, "Service Disconnected ",
                     Toast.LENGTH_SHORT).show();
         }
     };
@@ -86,8 +86,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btn_register=(Button)findViewById(R.id.btn_register);
         btn_login.setOnClickListener(this);
         btn_register.setOnClickListener(this);
-        login_phone.setText("+8801736549423");
-        login_password.setText("anwar");
         login_phone.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
