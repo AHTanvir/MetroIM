@@ -143,8 +143,8 @@ public class dbBackup {
                         return false;
                     }
                 }
-            }
-        }
+            }else return false;
+        }else return false;
         return true;
     }
     private String findOrCreateFolder(String prnt, String titl){

@@ -81,7 +81,6 @@ public class MetroImservice extends Service implements imanager {
     int counter;
     private SharedPreferences spre;
     private int infoUpdateCounter=0;
-    // timer to take the updated data from server
     private Timer timer=null;
     public class IMBinder extends Binder {
         public imanager getService() {
@@ -92,10 +91,8 @@ public class MetroImservice extends Service implements imanager {
 
     public void onCreate() {
         conManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        // Timer is used to take the friendList info every UPDATE_TIME_PERIOD;
         session=new SessionManager(getApplicationContext());
         getApplicationContext().getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, mObserver);
-        //ContactsContract.Contacts.CONTENT_URI
         timer = new Timer();
         System.out.println("----Oncreate");
         Thread thread = new Thread() {
@@ -213,6 +210,7 @@ public class MetroImservice extends Service implements imanager {
                     "&";
             Log.i("PARAMS", params);
             result = socketOperator.sendHttpRequest(params);
+            System.out.println("m---sendResult= "+result);
         }
             if(result.equals("1"))
             {
@@ -243,7 +241,6 @@ public class MetroImservice extends Service implements imanager {
                 "&action="+URLEncoder.encode("getLastSeen","UTF-8")+
                 "&friendphone="+URLEncoder.encode(MessageInfo.ACTIVEFRIEND_PHONE,"UTF-8")+
                 "&";
-        System.out.println("m-------->getLsatssen"+MessageInfo.ACTIVEFRIEND_PHONE);
         String result =socketOperator.sendHttpRequest(params);
         return result;
     }

@@ -145,7 +145,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                    {
                        tf_batch.setText(tf_dept.getText().toString());
                        tf_dept.setText("Teacher");
-                       Toast.makeText(RegisterActivity.this, "eeee",Toast.LENGTH_SHORT).show();
                    }
                    Thread thread=new Thread(){
                        String result=new String();
