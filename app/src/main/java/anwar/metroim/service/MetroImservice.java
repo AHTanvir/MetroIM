@@ -547,14 +547,33 @@ public class MetroImservice extends Service implements imanager {
             return id;
         else return "0";
     }
+
+    @Override
+    public String resetPassword(String Phone) throws UnsupportedEncodingException {
+        password=this.generateRandomId();
+        String params = "&phone=" + URLEncoder.encode(Phone, "UTF-8") +
+                "&password=" +URLEncoder.encode(password, "UTF-8")+
+                "&action=" +URLEncoder.encode("resetPassword", "UTF-8")  +
+                "&";
+        String result=null;
+        if (socketOperator.sendHttpRequest(params).equals("1"))
+        {
+            String msg="Your MetroIM new passwoid is: "+password;
+            result=socketOperator.sendSms(Phone,msg);
+            if(result.contains("messageId"))
+                return "1";
+        }
+            return "0";
+    }
+
     public String generateRandomId(){
         char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
         Random rnd = new Random();
-        StringBuilder sb = new StringBuilder((100000 + rnd.nextInt(900000)) + "-");
-        for (int i = 0; i < 5; i++)
-            sb.append(chars[rnd.nextInt(chars.length)]);
+        //StringBuilder sb = new StringBuilder((100000 + rnd.nextInt(900000)) );
+        /*for (int i = 0; i < 5; i++)
+            sb.append(chars[rnd.nextInt(chars.length)]);*/
 
-        return sb.toString();
+        return String.valueOf((100000 + rnd.nextInt(900000)));
     }
     public String test(){
         new Thread(new Runnable() {

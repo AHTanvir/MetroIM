@@ -108,19 +108,6 @@ public class ContactsListFragment extends Fragment implements AdapterView.OnItem
         pro_image=new Bitmap[tolat_contact];
         contact_type=new String[tolat_contact];
         contact_phoneNumber=new String[tolat_contact];
-        //Toast.makeText(getActivity(),""+M,Toast.LENGTH_SHORT).show();
-        //currently_viewing_Frag="Contact_list";
-              // For custom listView
-        //contact_name=view.getResources().getStringArray(R.array.contact_name);
-        //profile_picture=view.getResources().obtainTypedArray(profile_pics);
-        //status=view.getResources().getStringArray(R.array.status);
-       // contact_type=view.getResources().getStringArray(R.array.contact_type);
-        /*
-        for(int i=0;i<contact_name.length;i++){
-            RowItem itm=new RowItem(contact_name[i],pro_image[i],status[i],contact_type[i],contact_phoneNumber[i]);
-            rowItems.add(itm);
-        }
-        */
         contactRowList=arrayList.getmInstance().getContactlist();
             contact_list =(ListView) view.findViewById(R.id.contact_list_view);
              adapter= new CustomAdapter(getActivity(),contactRowList);

@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_donation_result) {
             view_Frag = "nn";
             tabLayout.setVisibility(View.GONE);
-            getSupportActionBar().hide();
+           // getSupportActionBar().hide();
             ResultFragment resultFrag = new ResultFragment();
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(Relative_layoutfor_fragments, resultFrag, resultFrag.getTag()).addToBackStack(null).commit();

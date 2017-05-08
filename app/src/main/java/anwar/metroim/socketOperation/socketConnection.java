@@ -33,7 +33,7 @@ import anwar.metroim.service.*;
  */
 
 public class socketConnection implements SocketInterface {
-    private static final String AUTHENTICATION_SERVER_ADDRESS = "http://192.168.0.101/metroim/index.php"; //TODO change to your WebAPI Address
+    private static final String AUTHENTICATION_SERVER_ADDRESS = "http://192.168.43.95/metroim/index.php"; //TODO change to your WebAPI Address
     private int listeningPort=0;
     private static final String HTTP_REQUEST_FAILED = "0";
 
@@ -128,7 +128,7 @@ public class socketConnection implements SocketInterface {
 
     public String sendHttpFileUploadRequest(String selectedPath) {
         boolean successful=false;
-        String UPLOAD_URL= "http://192.168.0.101/metroim/upload.php";
+        String UPLOAD_URL= "http://192.168.43.95/metroim/upload.php";
        int serverResponseCode=200;
             String fileName =selectedPath.replace(" ","_");
             HttpURLConnection conn = null;

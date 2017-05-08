@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/contact_name"
         android:layout_below="@id/contact_name"
+        android:maxLines="3"
         android:text="txt"
         android:textSize="16sp"/>
     <TextView

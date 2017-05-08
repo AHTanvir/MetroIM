@@ -494,6 +494,12 @@ switch($action)
 	}
 	else $out=FAILED;
 	break;
+	case "resetPassword":
+	$sql="update users set password='".$password."' where phone ='".$phone."' ";
+	if($db->query($sql))
+		$out=SUCCESSFUL;
+	else $out=failed;
+	break;
 }
 echo $out;
 /////////////////////////////

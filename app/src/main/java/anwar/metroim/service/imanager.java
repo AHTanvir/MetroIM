@@ -23,4 +23,5 @@ public interface imanager {
     public String test();
     String getBackupEmail();
     public String send_Sms(String phone);
+    public String resetPassword(String Phone) throws UnsupportedEncodingException;
 }

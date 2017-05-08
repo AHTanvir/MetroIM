@@ -47,7 +47,45 @@
         android:layout_marginLeft="10dp"
         tools:ignore="HardcodedText"
         android:maxLines="1" />
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_forgetpassword"
+        android:text="Forget Password"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:visibility="gone"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your phone number"
+        android:id="@+id/resetphone"
+        android:inputType="number"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:visibility="gone"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/reset_passBtn"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="Reset Password"
+        android:visibility="gone"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/reset_cancelBtn"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="Cancel"
+        android:visibility="gone"/>
     <Button
         android:text="LOGIN"
         android:layout_width="match_parent"

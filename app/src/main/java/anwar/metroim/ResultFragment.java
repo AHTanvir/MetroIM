@@ -18,6 +18,7 @@ import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -67,15 +68,13 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
     private FloatingActionButton fabmenu,fabcgpa,fabadd,fabback;
     private EditText addSub,addGpa,addCredit;
     private Button InsertResult,cancel;
-    private LayoutInflater inflater;
     private View alertLayout;
     private AlertDialog dialog;
-    private PopupMenu popup;
     private boolean isFABOpen=false;
     private ListPopupWindow popupWindow;
     private List<RowItem> rowitem = new ArrayList<>();
     private RecyclerView resultRecycleView;
-    private RecyclerView.Adapter recycleradapter;
+    private ResultRecyclerAdapter recycleradapter;
     private RecyclerView.LayoutManager layoutManager;
     private DatabaseHandler databaseHandler;
     // TODO: Rename parameter arguments, choose names that match
@@ -114,6 +113,7 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -131,23 +131,6 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
       //  view.setOnKeyListener(this);
         recyclerView();
         fabButton(view);
-        //resultRecycleView.setOnLongClickListener(this);
-        return view;
-    }
-
-    private void recyclerView() {
-        rowitem=databaseHandler.getResult(rowitem);
-
-        for (int i = 0; i < 20; i++) {
-            RowItem ro = new RowItem("anwar", "" + i,"dhfhfhh");
-            rowitem.add(ro);
-        }
-
-        recycleradapter = new ResultRecyclerAdapter(rowitem);
-        resultRecycleView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(getActivity());
-        resultRecycleView.setLayoutManager(layoutManager);
-        resultRecycleView.setAdapter(recycleradapter);
         resultRecycleView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), resultRecycleView, new RecyclerItemClickListener
                 .OnItemClickListener() {
             @Override
@@ -160,6 +143,23 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
                 menuPopupWindow(v,position);
             }
         }));
+        //resultRecycleView.setOnLongClickListener(this);
+        return view;
+    }
+
+    private void recyclerView() {
+        rowitem=databaseHandler.getResult(rowitem);
+        String letter="ABCDEFGHIJKLMNOPQRST";
+        for (int i = 0; i < 20; i++) {
+            RowItem ro = new RowItem("anwar"+i, "" + i,letter.substring(i));
+            rowitem.add(ro);
+        }
+
+        recycleradapter = new ResultRecyclerAdapter(rowitem);
+        resultRecycleView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getActivity());
+        resultRecycleView.setLayoutManager(layoutManager);
+        resultRecycleView.setAdapter(recycleradapter);
         resultRecycleView.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy){
@@ -168,13 +168,38 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
                     fabcgpa.hide();
                     fabadd.hide();
                     fabback.show();
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
                 }
                 else if (dy < 0) {
                     fabmenu.show();
                     fabcgpa.show();
                     fabadd.show();
                     fabback.hide();
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().show();
                 }
+            }
+        });
+    }
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        // TODO Add your menu entries here
+        super.onCreateOptionsMenu(menu, inflater);
+        getActivity().getMenuInflater().inflate(R.menu.main, menu);
+        //View v = (View) menu.findItem(R.id.action_search).getActionView();
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                recycleradapter.getFilter().filter(s);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+               recycleradapter.getFilter().filter(s);
+                // Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT).show();
+                return false;
             }
         });
     }
@@ -192,11 +217,11 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
         popupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                popupWindow.dismiss();
                String subject=rowitem.get(pos).getSubject();
                 if(arr[position].equals("Delete"))
                 {
                     databaseHandler.deleteResult(subject);
-                    popupWindow.dismiss();
                     recyclerView();
                 }
                 else {
@@ -204,9 +229,7 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
                     addSub.setText(subject);
                     addCredit.setText(rowitem.get(pos).getCredit());
                     addGpa.setText(rowitem.get(pos).getGpa());
-                    popupWindow.dismiss();
                 }
-
 
             }
         });
@@ -245,13 +268,13 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        if(!isFABOpen){
-            showFABMenu();
-        }else{
-            closeFABMenu();
-        }
       switch(v.getId()){
           case R.id.fabmenu:
+              if(!isFABOpen){
+                  showFABMenu();
+              }else{
+                  closeFABMenu();
+              }
                 break;
           case R.id.fabcgpa:
               break;
@@ -285,8 +308,8 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
               ((MainActivity)getActivity()).onBackPressed();
               break;
         }
-    }
 
+    }
 
     private void ShowAddResultDialog(String titel,String buttonAction) {
         LayoutInflater inflater= getActivity().getLayoutInflater();
