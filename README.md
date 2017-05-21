@@ -10,5 +10,5 @@
  5. show online and last seen.
  6. Add,update, view result with cgpa calculator.
  7. Goole drive backup.
- 8. View blood donor list with registration system.
+ 8. View blood donor list, blood donor registration.
  9. Notification
