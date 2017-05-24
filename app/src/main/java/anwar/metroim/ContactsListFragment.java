@@ -42,19 +42,11 @@ import static anwar.metroim.MessageInfo.ACTIVEFRIENDPHONE;
  * create an instance of this fragment.
  */
 public class ContactsListFragment extends Fragment implements AdapterView.OnItemClickListener,AdapterView.OnItemLongClickListener,AbsListView.OnScrollListener{
-    private ListView Contact_list_view;
-    public static String[] Contact_list={"A","A","A","A"};
-    public static String[] contact_name;
-    private CustomAdapter adapter;
-    public static TypedArray profile_picture;
-    public static Bitmap pro_image[];
+    public CustomAdapter adapter;
     public static String[]status;
     private ListPopupWindow popupWindow;
-    public static String[] contact_type;
-    public static String[] contact_number;
-    public static String[] contact_phoneNumber;
     MainActivity mainActivity;
- List<RowItem> contactRowList;
+    private List<RowItem> contactRowList;
     private ListView contact_list;
     public static int mLastFirstVisibleItem;
     float x1, x2, y1, y2;
@@ -102,24 +94,30 @@ public class ContactsListFragment extends Fragment implements AdapterView.OnItem
         View view=inflater.inflate(R.layout.fragment_contacts_list, container, false);
         //context=getContext();
         databaseHandler=new DatabaseHandler(getActivity());
-       int tolat_contact= databaseHandler.getContactsCount();
-        contact_name=new String[tolat_contact];
-        status=new String[tolat_contact];
-        pro_image=new Bitmap[tolat_contact];
-        contact_type=new String[tolat_contact];
-        contact_phoneNumber=new String[tolat_contact];
+        int tolat_contact= databaseHandler.getContactsCount();
         contactRowList=arrayList.getmInstance().getContactlist();
-            contact_list =(ListView) view.findViewById(R.id.contact_list_view);
-             adapter= new CustomAdapter(getActivity(),contactRowList);
-            contact_list.setAdapter(adapter);
-          contact_list.setOnItemLongClickListener(this);
+        contact_list =(ListView) view.findViewById(R.id.contact_list_view);
+        adapter= new CustomAdapter(getActivity(),contactRowList);
+        contact_list.setAdapter(adapter);
+        ((MainActivity)getActivity()).viewFriendInfo("CheckForUpadteContactsInfo","","",getActivity());
+        contact_list.setOnItemLongClickListener(this);
         contact_list.setTextFilterEnabled(true);
         contact_list.setOnItemClickListener(this);
         contact_list.setOnScrollListener(this);
         return view;
     }
 
-        // TODO: Rename method, update argument and hook method into UI event
+    public void checkForUpdate(final Context con) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                arrayList.getmInstance().setContactlist(databaseHandler.getContact(0));
+                adapter.updateAdapter(arrayList.getmInstance().getContactlist());
+            }
+        }).start();
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -262,8 +260,8 @@ public class ContactsListFragment extends Fragment implements AdapterView.OnItem
                 }else {
                    // Toast.makeText(getActivity(),"",Toast.LENGTH_SHORT).show();
                     databaseHandler.deleteContact(itm.getContact_number());
-                    arrayList.getmInstance().setChatlist(databaseHandler.getContact(0));
-                    adapter.updateAdapter(arrayList.getmInstance().getChatlist());
+                    arrayList.getmInstance().setContactlist(databaseHandler.getContact(0));
+                    adapter.updateAdapter(arrayList.getmInstance().getContactlist());
                     //updateListitm();
                     Toast.makeText(getActivity(),"Delete",Toast.LENGTH_SHORT).show();
                 }

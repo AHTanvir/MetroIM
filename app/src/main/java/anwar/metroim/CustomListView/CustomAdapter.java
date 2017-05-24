@@ -36,6 +36,8 @@ public class CustomAdapter extends BaseAdapter implements Filterable {
       //  this.getFilter();
     }
 
+    public CustomAdapter(Context context) {this.context = context;}
+
     public int getCount(){
         return rowItems.size();
     }
@@ -138,7 +140,7 @@ public class CustomAdapter extends BaseAdapter implements Filterable {
     }
     public void updateAdapter(List<RowItem> updateList ) {
         //and call notifyDataSetChanged
-        this.rowItems=updateList;
+        rowItems=updateList;
         notifyDataSetChanged();
     }
 }

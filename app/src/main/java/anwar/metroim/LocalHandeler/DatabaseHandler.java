@@ -133,6 +133,7 @@ private getCustomImage CusImg=new getCustomImage();
     }
     public List getContact(int CalledFor) {
         //If MetroImservice.getUserForUpdate() called then or if ContaclistFragment called then 0
+       ArrayList<String> infolist=new ArrayList<>();
         rowItems=new ArrayList<>();
         rowItems.clear();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -150,8 +151,7 @@ private getCustomImage CusImg=new getCustomImage();
                 }
                 else if(CalledFor==1)
                 {
-                    RowItem item=new RowItem(cursor.getString(2),cursor.getString(6));
-                    rowItems.add(item);
+                    infolist.add(cursor.getString(2)+";"+cursor.getString(6));
                     //row.add(cursor.getString(2)+";"+cursor.getString(6));
                 }
                 else if(CalledFor==2)
@@ -163,6 +163,8 @@ private getCustomImage CusImg=new getCustomImage();
             }while (cursor.moveToNext());
         }
         cursor.close();
+        if(CalledFor==1)
+            return infolist;
         return rowItems;
     }
     public String[] getContactName(String userNumber){

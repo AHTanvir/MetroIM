@@ -54,33 +54,21 @@ import anwar.metroim.socketOperation.*;
  */
 
 public class MetroImservice extends Service implements imanager {
-
-    public static String USERNAME;
     public static final String TAKE_MESSAGE = "Take_Message";
     public static final String LIST_UPDATED = "List_Upadate";
     public ConnectivityManager conManager = null;
     private final int UPDATE_TIME_PERIOD = 15000;
     private getCustomImage customImages=new getCustomImage();
-    private Calendar calander = Calendar.getInstance();
     private DateFormat dbfmtDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-    Context context;
     private SessionManager session;
     private SocketInterface socketOperator = new socketConnection(this);
     private DatabaseHandler databaseHandler = new DatabaseHandler(this);
     private final IBinder mBinder = new IMBinder();
     private String userphone;
     private String password;
-    String Contact_info_list;
-    public static String Meassage_list;
-    private  HashMap<String,String> upload=new HashMap<String,String>();
-    public static String M = null;
     String rawmList = new String();
     private boolean authenticatedUser = false;
-    private   List<RowItem> infoUpdateList=new ArrayList<>();
-    int counter;
     private SharedPreferences spre;
-    private int infoUpdateCounter=0;
     private Timer timer=null;
     public class IMBinder extends Binder {
         public imanager getService() {
@@ -88,7 +76,6 @@ public class MetroImservice extends Service implements imanager {
         }
 
     }
-
     public void onCreate() {
         conManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         session=new SessionManager(getApplicationContext());
@@ -98,8 +85,6 @@ public class MetroImservice extends Service implements imanager {
         Thread thread = new Thread() {
             @Override
             public void run() {
-                System.out.println("----thread");
-                //socketOperator.startListening(LISTENING_PORT_NO);
                 Random random = new Random();
                 int tryCount = 0;
                 while (socketOperator.startListening(10000 + random.nextInt(20000)) == 0) {
@@ -132,38 +117,9 @@ public class MetroImservice extends Service implements imanager {
            this.password = user.get(SessionManager.KEY_PASSWORD);
             arrayList.getmInstance().setServiceIsRunning(true);
             SceduleTimer();
-            /*
-            timer.schedule(new TimerTask() {
-                public void run() {
-                    try {
-                        Intent i = new Intent(LIST_UPDATED);
-                        String result1 = MetroImservice.this.getUserUpdateInfo();
-                        String result2 = MetroImservice.this.getMessage();
-                        if (result1 != null) {
-                            //contact list/Chat List fragment will be  UPdate which fragment is visiable
-                            sendBroadcast(i);
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, UPDATE_TIME_PERIOD, UPDATE_TIME_PERIOD);
-            */
         }
         return START_STICKY;
     }
-/*
-    @Override
-    public void onDestroy() {
-        // Cancel the persistent notification.
-        mNM.cancel(R.string.local_service_started);
-
-        // Tell the user we stopped.
-        Toast.makeText(this, R.string.local_service_stopped, Toast.LENGTH_SHORT).show();
-    }
-*/
-
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
@@ -228,11 +184,13 @@ public class MetroImservice extends Service implements imanager {
                 "&";
         String result = socketOperator.sendHttpRequest(params);
         //Server send result in json array formet so need to decode and store store local database
-        if(result !=LoginActivity.NO_NEW_UPDATE)
+        if(result !="0")
         {
+            System.out.println("m-------->resultcontacy"+result);
             this.decodeUserUpdateInfo(result);
+
         }
-        return result;
+        return "1";
     }
 
     public String getLastSeen() throws UnsupportedEncodingException{
@@ -300,13 +258,7 @@ public class MetroImservice extends Service implements imanager {
                                        }).start();
                                    }
                                }
-                               Intent i = new Intent(LIST_UPDATED);
-                               String result1 = MetroImservice.this.getUserUpdateInfo();
                                String result2 = MetroImservice.this.getMessage();
-                               if (result1 !="0") {
-                                   //contact list/Chat List fragment will be  UPdate which fragment is not visiable
-                                   sendBroadcast(i);
-                               }
                                if(MessageInfo.ACTIVEFRIEND_PHONE !=null)
                                {
                                    String seen=MetroImservice.this.getLastSeen();
@@ -317,8 +269,6 @@ public class MetroImservice extends Service implements imanager {
                                        sendBroadcast(lastseen);
                                    }
                                }
-
-
                            } catch (Exception e) {
                                e.printStackTrace();
                                System.out.println("m e "+e);
@@ -383,6 +333,11 @@ public class MetroImservice extends Service implements imanager {
                         getString("contactstatus"),jsonObj.getString("photo").replace(" ","+"),jsonObj.getString("infoupdatestatus"));
 
             }
+            if(jsonArray.length()>0)
+            {
+                Intent i = new Intent(LIST_UPDATED);
+                sendBroadcast(i);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -443,9 +398,15 @@ public class MetroImservice extends Service implements imanager {
         notificationManager.notify((int)System.currentTimeMillis(),notification);
 
     }
-    //this method return only 10 contacts for update..........................................
+
     public String getUserForUpdate(){
-        ArrayList<String> stringArray = new ArrayList<String>();
+       // infoUpdateList=databaseHandler.getContact(1);
+        List<String> infolist=new ArrayList<>();
+        infolist=databaseHandler.getContact(1);
+        JSONArray jsonArray=new JSONArray(infolist);
+        return jsonArray.toString();
+        //this method return only 10 contacts for update..........................................
+    /*    ArrayList<String> stringArray = new ArrayList<String>();
         stringArray.clear();
         if(infoUpdateCounter==0)
         {
@@ -468,7 +429,7 @@ public class MetroImservice extends Service implements imanager {
             c++;
         }
             JSONArray jsonArray=new JSONArray(stringArray);
-        return jsonArray.toString();
+        return jsonArray.toString();*/
 
     }
     private ContentObserver mObserver = new ContentObserver(new Handler()) {

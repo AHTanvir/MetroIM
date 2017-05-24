@@ -68,6 +68,7 @@ import anwar.metroim.Backup.dbBackup;
 import anwar.metroim.BloodDonor.donorActivity;
 import anwar.metroim.CustomImage.getCustomImage;
 import anwar.metroim.CustomImage.CompressImage;
+import anwar.metroim.CustomListView.CustomAdapter;
 import anwar.metroim.CustomListView.RowItem;
 import anwar.metroim.CustomListView.arrayList;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
@@ -85,7 +86,7 @@ import static anwar.metroim.service.MetroImservice.LIST_UPDATED;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TabLayout.OnTabSelectedListener {
     private TabLayout tabLayout;
-    private ImageView profile_image, imageView;
+    private ImageView profile_image;
     private imanager man_ger=new MetroImservice();
     public static Bitmap images = null;
     private String image_str;
@@ -94,22 +95,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String view_Frag ="not",currentFragment="not";
     private int selectedtab=3;
     private DatabaseHandler databaseHandler;
-    private CompressImage compressImage = new CompressImage();
-    private Handler handler = new Handler();
     private SessionManager session;
-    private Context context;
     private Handler handeler = new Handler();
     private String result = null;
     private NavigationView navigationView;
     private  View navview;
-    private MenuItem itm;
     private String st,nam,ph;
-    DrawerLayout drawer;
-    private BootBroadcast bootBroadcast;
     private AlertDialog.Builder updateStatusDialog;
     private Calendar ca = Calendar.getInstance();
     private getCustomImage getCustomImage;
-    private IphoneContacts iphoneContacts = new PhoneContacts();
    private ServiceConnection mConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -211,8 +205,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public class MessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(LIST_UPDATED))
+            if(intent.getAction().equals(LIST_UPDATED)){
                 updateList();
+            }
+
         }
 
     }
@@ -321,7 +317,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
         else if(id==R.id.nav_setting){
-            itm=item;
             view_Frag = "nn";
             tabLayout.setVisibility(View.GONE);
             getSupportActionBar().hide();
@@ -493,36 +488,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //when you click view profile in fragment this method will be invoked and contactViewFragment will be visiable
     public  void viewFriendInfo(final String req, final String value, final String name,Context con){
       //  showUpdateStatusDialog();
+        if(man_ger.isNetworkConnected()) {
+            final ProgressDialog progressDialog = new ProgressDialog(con);
+            progressDialog.setMessage("plz Wait......");
+            if (req.equals("&getFriendInfo="))
+                progressDialog.show();
 
-        final ProgressDialog progressDialog=new ProgressDialog(con);
-        progressDialog.setMessage("plz Wait......");
-        if (req.equals("&getFriendInfo="))
-            progressDialog.show();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    result=man_ger.updateInfo(req + URLEncoder.encode(value,"UTF-8")+ "&");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                handeler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(req.equals("&getFriendInfo="))
-                        {
-                            getSupportActionBar().hide();
-                            tabLayout.setVisibility(View.GONE);
-                            contactViewFragment  contactViewFragment =new contactViewFragment().newInstance(result,name,selectedtab);
-                            FragmentManager fragmentManager =getSupportFragmentManager();
-                            fragmentManager.beginTransaction().replace(Relative_layoutfor_fragments, contactViewFragment, contactViewFragment.getTag()).addToBackStack(null).commit();
-                            progressDialog.dismiss();
-                        }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (req.equals("&getFriendInfo="))
+                            result = man_ger.updateInfo(req + URLEncoder.encode(value, "UTF-8") + "&");
+                        else if (req.equals("CheckForUpadteContactsInfo"))
+                            result = man_ger.getUserUpdateInfo();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                });
-            }
-        }).start();
+                    handeler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (req.equals("&getFriendInfo=")) {
+                                getSupportActionBar().hide();
+                                tabLayout.setVisibility(View.GONE);
+                                contactViewFragment contactViewFragment = new contactViewFragment().newInstance(result, name, selectedtab);
+                                FragmentManager fragmentManager = getSupportFragmentManager();
+                                fragmentManager.beginTransaction().replace(Relative_layoutfor_fragments, contactViewFragment, contactViewFragment.getTag()).addToBackStack(null).commit();
+                                progressDialog.dismiss();
+                            }
+                        }
+                    });
+                }
+            }).start();
+        }else Toast.makeText(con,"Not Conected to Inertnet",Toast.LENGTH_SHORT).show();
     }
     public void updateList(){
        if(!view_Frag.equals("Chat_list"))
