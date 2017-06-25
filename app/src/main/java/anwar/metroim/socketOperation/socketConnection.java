@@ -1,10 +1,16 @@
 package anwar.metroim.socketOperation;
 
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import org.apache.commons.codec.binary.Base64;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -15,7 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -23,10 +31,17 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
+import anwar.metroim.LocalHandeler.DatabaseHandler;
+import anwar.metroim.MessageInfo;
 import anwar.metroim.service.*;
+
+import static anwar.metroim.service.MetroImservice.TAKE_MESSAGE;
 
 /**
  * Created by anwar on 12/3/2016.
@@ -36,13 +51,13 @@ public class socketConnection implements SocketInterface {
     private static final String AUTHENTICATION_SERVER_ADDRESS = "http://192.168.43.95/metroim/index.php"; //TODO change to your WebAPI Address
     private int listeningPort=0;
     private static final String HTTP_REQUEST_FAILED = "0";
-
+    private Socket client=null;
+    private Context context;
     private HashMap<InetAddress, Socket> sockets = new HashMap<InetAddress, Socket>();
-
     private ServerSocket serverSocket = null;
-
     private boolean listening;
-
+    private Handler h=new Handler();
+    private DatabaseHandler db;
     private class ReceiveConnection extends Thread {
         Socket clientSocket = null;
         public ReceiveConnection(Socket socket)
@@ -54,6 +69,7 @@ public class socketConnection implements SocketInterface {
         @Override
         public void run() {
             try {
+                System.out.println("socketServer");
                 //			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(
@@ -64,7 +80,16 @@ public class socketConnection implements SocketInterface {
                 {
                     if (inputLine.equals("exit") == false)
                     {
+                        final String i=inputLine;
                         //appManager.messageReceived(inputLine);
+                        h.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                System.out.println("-handeler port="+listeningPort);
+                                //new MetroImservice().t();
+                                urlDecode(i);
+                            }
+                        });
                     }
                     else
                     {
@@ -74,6 +99,7 @@ public class socketConnection implements SocketInterface {
                         socketConnection.this.sockets.remove(clientSocket.getInetAddress());
                     }
                 }
+                System.out.println("socketServer");
 
             } catch (IOException e) {
                 Log.e("AndroidIM_CON","ReceiveConnection.run: when receiving connection");
@@ -215,17 +241,14 @@ public class socketConnection implements SocketInterface {
             connection.setDoOutput(true);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
-
             String userCredentials = "application\\" + appKey + ":" + appSecret;
             byte[] encoded = Base64.encodeBase64(userCredentials.getBytes());
             String basicAuth = "Basic " + new String(encoded);
             connection.setRequestProperty("Authorization", basicAuth);
-
             String postData = "{\"Message\":\"" + message + "\"}";
             OutputStream os = connection.getOutputStream();
             os.write(postData.getBytes());
             BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
             String line;
             while ( (line = br.readLine()) != null)
                 response.append(line);
@@ -304,13 +327,14 @@ public class socketConnection implements SocketInterface {
             return StoragePath;
         else return null;
     }
-    public int startListening(int portNo)
+    public int startListening(int portNo,Context context)
     {
         listening = true;
 
         try {
             serverSocket = new ServerSocket(portNo);
             this.listeningPort = portNo;
+            this.context=context;
         } catch (IOException e) {
             //e.printStackTrace();
             this.listeningPort = 0;
@@ -365,5 +389,47 @@ public class socketConnection implements SocketInterface {
     public int getListeningPort() {
 
         return this.listeningPort;
+    }
+    public String sendDirectMsg(String to,String sendDate,String msgType,String msg){
+        /*this.MessageReceived(jsonObj.getString("sfrom"),jsonObj.getString("sentDt"),
+                jsonObj.getString("messagesType"),jsonObj.getString("messageText"));*/
+        try {
+            String data= URLEncoder.encode(to, "UTF-8")+"&"+
+                    URLEncoder.encode(sendDate, "UTF-8")+"&"+
+                    URLEncoder.encode(msgType, "UTF-8")+"&"+
+                    URLEncoder.encode(msg, "UTF-8");
+            client=new Socket(MessageInfo.frndIP,Integer.parseInt(MessageInfo.frndPort));
+            PrintStream outt = new PrintStream(client.getOutputStream());
+            BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
+            outt.println(data);
+            client.close();
+            outt.close();
+            in.close();
+            System.out.println("close");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return "0";
+        }
+        return "1";
+    }
+    private void urlDecode(String msg){
+        db=new DatabaseHandler(this.context);
+       try {
+            String d[]=msg.split("&");
+           String []name=db.getContactName(d[0]);
+           db.addMessage(URLDecoder.decode(d[0],"UTF-8"),URLDecoder.decode(d[3],"UTF-8"),
+                   URLDecoder.decode(d[1],"UTF-8"),"from",URLDecoder.decode(d[2],"UTF-8"),"0");
+           Intent i=new Intent(TAKE_MESSAGE);
+           i.putExtra(MessageInfo.FROM,URLDecoder.decode(d[0],"UTF-8"));
+           i.putExtra(MessageInfo.SENDERNAME,name[0]);
+           i.putExtra(MessageInfo.SENDATE,URLDecoder.decode(d[1],"UTF-8"));
+           i.putExtra(MessageInfo.MESSAGE_TYPE,URLDecoder.decode(d[2],"UTF-8"));
+           i.putExtra(MessageInfo.MESSAGE_LIST,URLDecoder.decode(d[3],"UTF-8"));
+           this.context.sendBroadcast(i);
+       /*     new MetroImservice().MessageReceived(URLDecoder.decode(d[0],"UTF-8"),URLDecoder.decode(d[1],
+                    "UTF-8"),URLDecoder.decode(d[2],"UTF-8"),URLDecoder.decode(d[3],"UTF-8"));*/
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 }
