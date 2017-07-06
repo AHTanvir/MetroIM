@@ -70,7 +70,6 @@ public class socketConnection implements SocketInterface {
         public void run() {
             try {
                 System.out.println("socketServer");
-                //			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(
                                 clientSocket.getInputStream()));
@@ -102,7 +101,7 @@ public class socketConnection implements SocketInterface {
                 System.out.println("socketServer");
 
             } catch (IOException e) {
-                Log.e("AndroidIM_CON","ReceiveConnection.run: when receiving connection");
+              
             }
         }
     }
