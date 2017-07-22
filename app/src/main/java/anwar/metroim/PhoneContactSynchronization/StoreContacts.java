@@ -32,8 +32,6 @@ public class StoreContacts {
     Context context;
     private IphoneContacts iphoneContacts = new PhoneContacts();
     getCustomImage CusImg= new getCustomImage();
-    public static List<String> jssonList = new ArrayList<>();
-    String n="0222";
 
     public StoreContacts(Context context) {
         this.context = context;

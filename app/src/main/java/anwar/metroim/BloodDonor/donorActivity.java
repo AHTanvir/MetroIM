@@ -107,8 +107,8 @@ public class donorActivity extends AppCompatActivity implements AdapterView.OnIt
         context=this;
         spinner = (Spinner) findViewById(R.id.toolbar_spinner);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        for (int i = 0; i < 20; i++) {
-            RowItem ro = new RowItem("anwar", "" + i);
+        for (int i = 0; i < 10; i++) {
+            RowItem ro = new RowItem("Name", "Contact Number");
             rowitem.add(ro);
         }
         recycleradapter = new DonorRecyclerAdapter(rowitem);

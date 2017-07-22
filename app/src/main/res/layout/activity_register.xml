@@ -6,16 +6,29 @@
     android:orientation="vertical"
     android:background="@color/colorPrimary"
     tools:context="anwar.metroim.RegisterActivity">
+
+    <TextView
+        android:id="@+id/editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:text="User Type" />
+
     <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
         android:id="@+id/spinner_type"
-        android:textColorHint="@color/white"
-        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
         android:layout_marginBottom="5dp"
-        android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
-        android:spinnerMode="dropdown" />
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:spinnerMode="dropdown"
+        android:textColorHint="@color/white"
+        android:visibility="visible" />
 
 
     <EditText
@@ -66,7 +79,6 @@
         android:layout_marginBottom="5dp"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
-        android:completionHint="Dept"
         android:hint="Dept"
         android:singleLine="true"
         android:imeOptions="actionNext" />
@@ -80,6 +92,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:hint="Batch"
+        android:inputType="number"
         android:singleLine="true"
         android:imeOptions="actionNext"/>
 

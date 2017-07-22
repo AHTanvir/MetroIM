@@ -81,7 +81,6 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private MainActivity main;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -150,19 +149,19 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
     private void recyclerView() {
         rowitem=databaseHandler.getResult(rowitem);
         String letter="ABCDEFGHIJKLMNOPQRST";
-        for (int i = 0; i < 20; i++) {
-            RowItem ro = new RowItem("anwar"+i, "" + i,letter.substring(i));
+        for (int i = 0; i < 100; i++) {
+            RowItem ro = new RowItem("subject","Credit" ,"gpa");
             rowitem.add(ro);
         }
-
         recycleradapter = new ResultRecyclerAdapter(rowitem);
         resultRecycleView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getActivity());
         resultRecycleView.setLayoutManager(layoutManager);
         resultRecycleView.setAdapter(recycleradapter);
-        resultRecycleView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+        resultRecycleView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                int dy=(int)resultRecycleView.getY();
                 if (dy > 0) {
                     fabmenu.hide();
                     fabcgpa.hide();
@@ -170,7 +169,7 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
                     fabback.show();
                     ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
                 }
-                else if (dy < 0) {
+                else if (dy <= 0) {
                     fabmenu.show();
                     fabcgpa.show();
                     fabadd.show();
@@ -179,6 +178,7 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
                 }
             }
         });
+
     }
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
@@ -376,7 +376,26 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
         getView().setOnKeyListener(this);*/
     }
     /*
-    // implement View.OnKeyListener
+      resultRecycleView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                if (dy > 0) {
+                    fabmenu.hide();
+                    fabcgpa.hide();
+                    fabadd.hide();
+                    fabback.show();
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+                }
+                else if (dy < 0) {
+                    fabmenu.show();
+                    fabcgpa.show();
+                    fabadd.show();
+                    fabback.hide();
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+                }
+            }
+        });
+    ////// implement View.OnKeyListener
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

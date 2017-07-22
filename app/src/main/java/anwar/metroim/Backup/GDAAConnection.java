@@ -47,6 +47,8 @@ import java.util.ArrayList;
  */
 
 public class GDAAConnection implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+    private dbBackup backup;
+    private ConnectionCallbacks callbacks;
     private GoogleApiClient googleApiClient;
     private boolean conStatus=false;
     private final String GDID = "gdid";
@@ -54,7 +56,8 @@ public class GDAAConnection implements GoogleApiClient.ConnectionCallbacks, Goog
     private final String T = "titl";
     private final String MIME = "mime";
    // private dbBackup dBinterface=new dbBackup();
-    public boolean ConnectToDrive(Context context, String email){
+    public boolean ConnectToDrive(Context context, String email,dbBackup backup){
+        this.callbacks=(ConnectionCallbacks)backup;
       if(email !=null)
       {
           try {
@@ -84,10 +87,7 @@ public class GDAAConnection implements GoogleApiClient.ConnectionCallbacks, Goog
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-       // dBinterface.connected();
-        conStatus=true;
-        System.out.println("---------------connectedok");
-
+        this.callbacks.Connected();
     }
 
     @Override
@@ -96,7 +96,7 @@ public class GDAAConnection implements GoogleApiClient.ConnectionCallbacks, Goog
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-      //  dBinterface.connectionFail();
+        this.callbacks.Failed();
     }
     public ArrayList<ContentValues> search(String prnId, String titl, String mime) {
         ArrayList<ContentValues> gfs = new ArrayList<>();
@@ -464,5 +464,8 @@ public class GDAAConnection implements GoogleApiClient.ConnectionCallbacks, Goog
         if (mime != null) cv.put(MIME, mime);
         return cv;
     }
-
+    public interface ConnectionCallbacks{
+        void Connected();
+        void Failed();
+    }
 }

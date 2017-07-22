@@ -296,12 +296,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.settingFrag_back:
                 ((AppCompatActivity) getActivity()).onBackPressed();
-            /*    ((AppCompatActivity) getActivity()).getSupportActionBar().show();
-                TabLayout tabLayout=(TabLayout)getActivity().findViewById(R.id.tab_view);
-                tabLayout.setVisibility(View.VISIBLE);
-                ChatListFragment chatListFragment = new ChatListFragment();
-                FragmentManager fragmentManager =getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(Relative_layoutfor_fragments, chatListFragment, chatListFragment.getTag()).commit();*/
                 break;
         }
 

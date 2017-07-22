@@ -33,7 +33,7 @@ public class BootBroadcast extends BroadcastReceiver {
                     break;
                 case "android.net.conn.CONNECTIVITY_CHANGE":
                     //if the isNetworkConnected =false  Background Service will be stop
-                    if (isNetworkConnected(context)) {
+                    if (!arrayList.getmInstance().isServiceIsRunning()&& isNetworkConnected(context)) {
                         context.startService(new Intent(context, MetroImservice.class));
                     }
                     break;

@@ -130,8 +130,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         session = new SessionManager(this);
-        if(!session.isLoggedIn())
-        {
+        if(!session.isLoggedIn()) {
             Intent i=new Intent(this,LoginActivity.class);
             finish();
             startActivity(i);

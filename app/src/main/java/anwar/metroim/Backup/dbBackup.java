@@ -31,16 +31,17 @@ import au.com.bytecode.opencsv.CSVWriter;
  * Created by anwar on 4/4/2017.
  */
 
-public class dbBackup {
+public class dbBackup implements GDAAConnection.ConnectionCallbacks{
     private static final String DATABASE_NAME ="MetroimData.db";
     private static final String L_TAG = "_X_";
     private final String MYROOT = "MetroIm";
     private final String MIME_TEXT = "text/plain";
     private final String MIME_FLDR = "application/vnd.google-apps.folder";
     private final String TITL = "DbTable";
+    private boolean isConnected=false;
     private final String T="titl";
     private final String GDID = "gdid";
-    private final String MIME = "mime";
+    private final String MIME = "mime",task=null;
     private Context context;
     private SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private Calendar cal = Calendar.getInstance();
@@ -48,12 +49,12 @@ public class dbBackup {
     private Backup_email backup_email;
     private static final String TITL_FMT = "yyMMdd-HHmmss";
     private boolean ConnectionStatus=true;
-    DatabaseHandler databaseHandle;
-    SharedPreferences spref;
-   private GDAAConnection gdaaConnection=new GDAAConnection();
+    private DatabaseHandler databaseHandle;
+    private SharedPreferences spref;
+    private GDAAConnection gdaaConnection=new GDAAConnection();
 
     public dbBackup(Context context, String email) {
-        gdaaConnection.ConnectToDrive(context,email);
+        gdaaConnection.ConnectToDrive(context,email,this);
         this.context = context;
         this.email = email;
         backup_email=new Backup_email(context);
@@ -68,28 +69,26 @@ public class dbBackup {
     }
 
     public void crateBackup(){
-              deleteFolder();
-        if(uploadTable(exportDbTable("Result_list")) && uploadTable(exportDbTable("Message_list")))
-        {
-            cal.add(Calendar.DAY_OF_MONTH,1);
-            backup_email.addschedule(cal.getTime());
-            System.out.println("db----Backup Successful"+cal.getTime());
-        }else System.out.println("db----Backup Failed");
+            deleteFolder();
+            if(uploadTable(exportDbTable("Result_list")) && uploadTable(exportDbTable("Message_list")))
+            {
+                cal.add(Calendar.DAY_OF_MONTH,1);
+                backup_email.addschedule(cal.getTime());
+                System.out.println("db----Backup Successful"+cal.getTime());
+            }else System.out.println("db----Backup Failed");
+
     }
 
     public boolean RestoreBackup(){
-        //ArrayList<ContentValues> gfMyRoot = GDAA.search("appfolder", UT.MYROOT, null);  // app folder test
-
-               ArrayList<ContentValues> gfMyRoot = gdaaConnection.search("root", MYROOT, null);
-               if (gfMyRoot != null && gfMyRoot.size() == 1 ){
-                   iterate(gfMyRoot.get(0),"name");
-               }
-               else return false;
-               if(importDbTable("Result_list") && importDbTable("Message_list"))
-               {
-                   System.out.println("db----restore Successful");
-                   return true;
-               }
+            ArrayList<ContentValues> gfMyRoot = gdaaConnection.search("root", MYROOT, null);
+            if (gfMyRoot != null && gfMyRoot.size() == 1 ){
+                iterate(gfMyRoot.get(0),"name");
+            }
+            else return false;
+            if(importDbTable("Result_list") && importDbTable("Message_list")) {
+                System.out.println("db----restore Successful");
+                return true;
+            }
         return false;
     }
     private void deleteFolder(){
@@ -236,5 +235,17 @@ public class dbBackup {
         }
         csvfile.delete();
         return true;
+    }
+
+    @Override
+    public void Connected() {
+        System.out.println("is Connected to drive ");
+        isConnected=true;
+    }
+
+    @Override
+    public void Failed() {
+        System.out.println("Not connected to drive ");
+        isConnected=false;
     }
 }

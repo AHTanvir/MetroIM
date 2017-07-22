@@ -18,7 +18,7 @@ public interface imanager {
     public String authenticateUser(String usernameText, String passwordText) throws UnsupportedEncodingException;
     public String signUpUser(String nameText,String emailText,String passwordText,String deptText,String batchText,String idText,String phoneText)throws UnsupportedEncodingException;
     String donorOperation(String param)throws UnsupportedEncodingException;
-    String getLastSeen() throws UnsupportedEncodingException;
+    void getLastSeen() throws UnsupportedEncodingException;
     public void fileDownload(final String url,final String phone,final String rowId,final int position);
     public String test();
     String getBackupEmail();

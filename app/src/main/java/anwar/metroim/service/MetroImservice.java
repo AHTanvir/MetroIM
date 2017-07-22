@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -53,12 +54,13 @@ import anwar.metroim.socketOperation.*;
  * Created by anwar on 12/5/2016.
  */
 
-public class MetroImservice extends Service implements imanager {
+public class MetroImservice extends Service implements imanager{
     public static final String TAKE_MESSAGE = "Take_Message";
     public static final String LIST_UPDATED = "List_Upadate";
     public ConnectivityManager conManager = null;
     private final int UPDATE_TIME_PERIOD = 15000;
     private getCustomImage customImages=new getCustomImage();
+    private Calendar calander = Calendar.getInstance();
     private DateFormat dbfmtDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private SessionManager session;
     private SocketInterface socketOperator = new socketConnection(this);
@@ -77,49 +79,56 @@ public class MetroImservice extends Service implements imanager {
 
     }
     public void onCreate() {
+        System.out.println("----Oncreate");
         conManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         session=new SessionManager(getApplicationContext());
         getApplicationContext().getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, mObserver);
         timer = new Timer();
-        System.out.println("----Oncreate");
-        Thread thread = new Thread() {
+        setUserId();
+       Thread thread = new Thread() {
             @Override
             public void run() {
                 Random random = new Random();
                 int tryCount = 0;
-                while (socketOperator.startListening(10000 + random.nextInt(20000)) == 0) {
+                while (socketOperator.startListening(10000 + random.nextInt(20000),MetroImservice.this) == 0) {
                     tryCount++;
                     if (tryCount > 10) {
                         // if it can't listen a port after trying 10 times, give up...
                         break;
                     }
-
                 }
             }
         };
-        thread.start();
+            thread.start();
 
     }
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("LocalService", "Received start id " + startId + ": " + intent);
-        System.out.println("m-------->Service start");
-        if(socketOperator ==null)
+    /*    if(socketOperator ==null)
         {
             timer=new Timer();
             socketOperator=new socketConnection(this);
             databaseHandler = new DatabaseHandler(this);
-        }
+        }*/
+        arrayList.getmInstance().setServiceIsRunning(true);
          spre = PreferenceManager.getDefaultSharedPreferences(this);
-        if(session.isLoggedIn()){
-            HashMap<String, String> user = session.getUserDetails();
-            // name
-           this.userphone= user.get(SessionManager.KEY_PHONE);
-           this.password = user.get(SessionManager.KEY_PASSWORD);
+        if(setUserId()){
             arrayList.getmInstance().setServiceIsRunning(true);
             SceduleTimer();
-        }
+            System.out.println("m-------->service running");
+        }else exit();
         return START_STICKY;
     }
+    private boolean setUserId(){
+        if(session.isLoggedIn()){
+            HashMap<String, String> user = session.getUserDetails();
+            this.userphone= user.get(SessionManager.KEY_PHONE);
+            this.password = user.get(SessionManager.KEY_PASSWORD);
+            return true;
+        }
+        return false;
+    }
+
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
@@ -131,15 +140,13 @@ public class MetroImservice extends Service implements imanager {
 
 
     public void onDestroy() {
-        //Log.i("IMService is being destroyed", "...");
         super.onDestroy();
     }
 
     public void exit() {
-        System.out.println("m-------->service stop");
+        System.out.println("m-------->services Stop self");
         timer.cancel();
         socketOperator.exit();
-        socketOperator = null;
         arrayList.getmInstance().setServiceIsRunning(false);
         MetroImservice.this.stopSelf();
     }
@@ -154,6 +161,7 @@ public class MetroImservice extends Service implements imanager {
     }
 
     public String sendMessage(String to,String mType,String message,String RowId) throws UnsupportedEncodingException {
+        String date=dbfmtDate.format(calander.getTime());
         String msg=message;
         String result="0";
         if(message!=null && message !="") {
@@ -164,12 +172,12 @@ public class MetroImservice extends Service implements imanager {
                     "&mType=" + URLEncoder.encode(mType, "UTF-8") +
                     "&message=" + URLEncoder.encode(message, "UTF-8") +
                     "&";
-            Log.i("PARAMS", params);
-            result = socketOperator.sendHttpRequest(params);
-            System.out.println("m---sendResult= "+result);
+            if(MessageInfo.frndStatus!=null && MessageInfo.frndStatus=="Online")
+                result=socketOperator.sendDirectMsg(to,date,mType,message);
+            if (result=="0")
+                result = socketOperator.sendHttpRequest(params);
         }
-            if(result.equals("1"))
-            {
+            if(result.equals("1")){
                 databaseHandler.updateMessage(RowId,3);
             }
             else  databaseHandler.updateMessage(RowId,4);
@@ -186,21 +194,33 @@ public class MetroImservice extends Service implements imanager {
         //Server send result in json array formet so need to decode and store store local database
         if(result !="0")
         {
-            System.out.println("m-------->resultcontacy"+result);
             this.decodeUserUpdateInfo(result);
 
         }
         return "1";
     }
 
-    public String getLastSeen() throws UnsupportedEncodingException{
+    public void getLastSeen() throws UnsupportedEncodingException{
         String params="&phone="+URLEncoder.encode(this.userphone,"UTF-8")+
                 "&password="+URLEncoder.encode(this.password,"UTF-8")+
+                "&port=" + URLEncoder.encode(Integer.toString(socketOperator.getListeningPort()), "UTF-8") +
                 "&action="+URLEncoder.encode("getLastSeen","UTF-8")+
                 "&friendphone="+URLEncoder.encode(MessageInfo.ACTIVEFRIEND_PHONE,"UTF-8")+
                 "&";
-        String result =socketOperator.sendHttpRequest(params);
-        return result;
+        String res=socketOperator.sendHttpRequest(params);
+        if(res !="0")
+        {
+            try {
+                JSONObject ja=new JSONObject(res);
+                Intent lastseen = new Intent("LAST_SEEN");
+                lastseen.putExtra("LASTSEEN",ja.getString("a"));
+                lastseen.putExtra("IP",ja.getString("b"));
+                lastseen.putExtra("PORT",ja.getString("c"));
+                sendBroadcast(lastseen);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
     public String signUpUser(String nameText, String emailText, String passwordText,
                              String deptText, String batchText, String idText, String phoneText) throws UnsupportedEncodingException{
@@ -231,9 +251,7 @@ public class MetroImservice extends Service implements imanager {
         String result =this.getMessage();
         rawmList = result;
         if (result != null && !result.equals(LoginActivity.AUTHENTICATION_FAILED)) {
-            // if user is authenticated then return string from server is not equal to AUTHENTICATION_FAILED
             this.authenticatedUser = true;
-           // SceduleTimer();
         }
         return result;
     }
@@ -241,9 +259,7 @@ public class MetroImservice extends Service implements imanager {
     private  void SceduleTimer(){
                timer.schedule(new TimerTask() {
                    public void run() {
-                       if(isNetworkConnected())
-                       {
-                           System.out.println("m-------->service running");
+                       if(isNetworkConnected()) {
                            try {
                                final String email=getBackupEmail();
                                if(email !=null )
@@ -261,13 +277,7 @@ public class MetroImservice extends Service implements imanager {
                                String result2 = MetroImservice.this.getMessage();
                                if(MessageInfo.ACTIVEFRIEND_PHONE !=null)
                                {
-                                   String seen=MetroImservice.this.getLastSeen();
-                                   if(seen !="0")
-                                   {
-                                       Intent lastseen = new Intent("LAST_SEEN");
-                                       lastseen.putExtra("LASTSEEN",seen);
-                                       sendBroadcast(lastseen);
-                                   }
+                                   MetroImservice.this.getLastSeen();
                                }
                            } catch (Exception e) {
                                e.printStackTrace();
@@ -319,6 +329,8 @@ public class MetroImservice extends Service implements imanager {
                 "&action=" +URLEncoder.encode("updateInfo", "UTF-8")  +
                 para;
         String result = socketOperator.sendHttpRequest(params);
+        if(para.contains("&updatePassword=") && result.equals("1"))
+            setUserId();
         return result;
     }
 
@@ -536,6 +548,11 @@ public class MetroImservice extends Service implements imanager {
 
         return String.valueOf((100000 + rnd.nextInt(900000)));
     }
+    public int generatePortNO(String number){
+        String port=number.substring(4,9);
+        System.out.println(number+" is portNO: "+port);
+        return Integer.parseInt(port);
+    }
     public String test(){
         new Thread(new Runnable() {
             int i=0;
@@ -554,5 +571,16 @@ public class MetroImservice extends Service implements imanager {
         }).start();
         return "return";
     }
-
+public void t(){
+    System.out.println("-caled from socket class");
+}
+    public void urlDecode(String msg){
+        try {
+            String d[]=msg.split("&");
+            new MetroImservice().MessageReceived(URLDecoder.decode(d[0],"UTF-8"),URLDecoder.decode(d[1],
+                    "UTF-8"),URLDecoder.decode(d[2],"UTF-8"),URLDecoder.decode(d[3],"UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -10,6 +10,9 @@ import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,26 +35,22 @@ import anwar.metroim.service.*;
 
 
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener,AdapterView.OnItemSelectedListener{
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener,
+        AdapterView.OnItemSelectedListener,TextWatcher,View.OnFocusChangeListener {
     Context context;
     public static String va="register";
     private View alertLayout;
     private AlertDialog dialog;
-    private static final int FILL_ALL_FIELDS = 0;
-    protected static final int TYPE_SAME_PASSWORD_IN_PASSWORD_FIELDS = 1;
-    private static final int SIGN_UP_FAILED = 2;
-    private static final int SIGN_UP_USERNAME_CRASHED = 3;
-    private static final int SIGN_UP_SUCCESSFULL = 4;
-    protected static final int USERNAME_AND_PASSWORD_LENGTH_SHORT = 5;
-    private static final String SERVER_RES_RES_SIGN_UP_SUCCESFULL = "1";
-    private static final String SERVER_RES_SIGN_UP_USERNAME_CRASHED = "2";
     private  Spinner spinner_type;
     private String vCode;
-    private AutoCompleteTextView tf_dept,tf_batch;
+    private ArrayAdapter adapter;
+    private AutoCompleteTextView tf_batch;
+    private AutoCompleteTextView tf_dept;
     private Button btn_singup,resend,ok;
     private EditText tf_name,tf_email,tf_password,tf_id,tf_phone,veri_code;
     private imanager man_ger;
     private Handler handler = new Handler();
+    private String deptList[]=new String[]{"CSE","EEE","BBA","LLB","EC0"};
     private IphoneContacts iphoneContacts=new PhoneContacts();
     private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -91,10 +90,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         tf_batch = (AutoCompleteTextView) findViewById(R.id.tf_batch);
         spinner_type = (Spinner) findViewById(R.id.spinner_type);
         btn_singup.setOnClickListener(this);
+        tf_dept.addTextChangedListener(this);
         addItemOnSpinner();
-        ///
         spinner_type.setOnItemSelectedListener(this);
-        tf_phone.setText(iphoneContacts.getPrefixCountyCode(context));
+        tf_phone.setOnFocusChangeListener(this);
+        adapter=new ArrayAdapter<>(this,R.layout.list_item, deptList);
+        tf_dept.setOnFocusChangeListener(this);
     }
 
 
@@ -107,14 +108,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         spinner_type.setAdapter(adapter);
     }
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        if(spinner_type.getSelectedItem().equals("Teacher"))
-        {
+        if(spinner_type.getSelectedItem().equals("Teacher")) {
            // tf_dept.setVisibility(View.GONE);
             tf_batch.setVisibility(View.GONE);
             tf_batch.setText("Teacher");
         }
-        else
-        {
+        else {
            // tf_dept.setVisibility(view.VISIBLE);
             tf_batch.setVisibility(View.VISIBLE);
             tf_batch.setText("");
@@ -129,8 +128,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
        switch (view.getId())
        {
            case R.id.btn_singup:
-               if(tf_phone.length()>=0 && tf_id.length()>=0 && tf_password.length()>=0 )
-                {
+               if(tf_phone.length()>=0 && tf_id.length()>=0 && tf_password.length()>=0 ) {
                     ShowDialog();
                 }
                else {
@@ -141,8 +139,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                if(veri_code.getText().toString().equals(vCode))
                {
                    dialog.dismiss();
-                   if(tf_batch.getText().toString().equals("Teacher"))
-                   {
+                   if(tf_batch.getText().toString().equals("Teacher")) {
                        tf_batch.setText(tf_dept.getText().toString());
                        tf_dept.setText("Teacher");
                    }
@@ -160,15 +157,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                            }
                                handler.post(new Runnable(){
                                    public void run() {
-                                       if(result .equals("1"))
-                                       {
+                                       if(result .equals("1")) {
                                            Toast.makeText(RegisterActivity.this,"SUCCESFULL", Toast.LENGTH_LONG).show();
                                            Intent i=new Intent(RegisterActivity.this,LoginActivity.class);
                                            finish();
                                            startActivity(i);
                                        }
-                                       else if (result .equals("5"))
-                                       {
+                                       else if (result .equals("5")) {
                                            Toast.makeText(RegisterActivity.this,"Phone number already used", Toast.LENGTH_LONG).show();
                                        }
                                        else  Toast.makeText(RegisterActivity.this,"FAILED", Toast.LENGTH_LONG).show();
@@ -189,9 +184,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                        h.post(new Runnable() {
                            @Override
                            public void run() {
-                               if(vCode.equals("0"))
-                               {
-                                   Toast.makeText(getApplicationContext(), "Check your Phone number and try Again", Toast.LENGTH_SHORT).show();
+                               if(vCode.equals("0")) {
+                                   Toast.makeText(getApplicationContext(), "Make sure  Phone number is correct and try Again", Toast.LENGTH_SHORT).show();
                                }
                            }
                        });
@@ -223,12 +217,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         resend= (Button) alertLayout.findViewById(R.id.resendbtn);
         ok.setOnClickListener(this);
         resend.setOnClickListener(this);
-
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Verification");
-        // this is set the view from XML inside AlertDialog
         alert.setView(alertLayout);
-        // disallow cancel of AlertDialog on click of back button and outside touch
         alert.setCancelable(false);
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
@@ -238,5 +229,34 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         });
         dialog = alert.create();
         dialog.show();
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+ //      adapter=new ArrayAdapter<>(this,R.layout.list_item, deptList);
+        tf_dept.setAdapter(adapter);
+        tf_dept.showDropDown();
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        switch (v.getId()){
+            case R.id.tf_dept:
+                tf_dept.setAdapter(adapter);
+                tf_dept.showDropDown();
+                break;
+            case R.id.tf_phone:
+                tf_phone.setText(iphoneContacts.getPrefixCountyCode(context));
+                break;
+        }
     }
 }

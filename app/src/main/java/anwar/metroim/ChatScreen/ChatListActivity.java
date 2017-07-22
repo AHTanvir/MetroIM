@@ -104,13 +104,10 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
     private LinearLayout mRevealView;
     private boolean hidden = true;
     private ImageButton gallery_btn, photo_btn;
-    private Toolbar toolbar;
-    private ProgressBar circularProgressBar;
     private ImageView toolbar_imageView;
-    private TextView custom_toolbar_textView,CustomAcBar_name,CustomAcBar_lastSeen;
+    private TextView CustomAcBar_name,CustomAcBar_lastSeen;
     private Button Chat_send_button,toolbar_backButton;
     private imanager man_ger;
-    private String []Active_userInfo=new String[3];
     public  static String currentDateHolder="date";
     private String active_friend_phone;
     private String active_friend_name;
@@ -118,14 +115,13 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
     String path="";
     private boolean isHidden=true;
     private String result=null,content,imid;
-    private int typ,visibility;
+    private int typ;
     private FloatingActionButton add_contactBtn;
-    String StoragePath=null;
     DatabaseHandler databaseHandler;
     private List<ChatModel> Chat_list = new ArrayList<ChatModel>();
     private Calendar calander = Calendar.getInstance();
     private DateFormat dbStoreFormate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private getCustomImage getCustomImage=new getCustomImage();
+    private getCustomImage customImage=new getCustomImage();
     SessionManager session;
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -135,6 +131,16 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
             // service that we know is running in our own process, we can
             // cast its IBinder to a concrete class and directly access it.
             man_ger= ((MetroImservice.IMBinder)service).getService();
+          new Thread(new Runnable() {
+              @Override
+              public void run() {
+                  try {
+                      man_ger.getLastSeen();
+                  } catch (UnsupportedEncodingException e) {
+                      e.printStackTrace();
+                  }
+              }
+          }).start();
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -179,7 +185,7 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
         CustomAcBar_name=(TextView)getSupportActionBar().getCustomView().findViewById(R.id.custon_acbar_textview);
         CustomAcBar_lastSeen=(TextView)getSupportActionBar().getCustomView().findViewById(R.id.custom_acbar_lastseen);
         int totalConversion=databaseHandler.getContactsConversinCount(active_friend_phone);
-        Bitmap bitmap=getCustomImage.getRoundedShape(active_friend_img,100,100);
+        Bitmap bitmap= customImage.getRoundedShape(active_friend_img,100,100);
         toolbar_imageView.setImageBitmap(bitmap);
         CustomAcBar_name.setText(active_friend_name);
         if(active_friend_name.matches("\\+\\d{13}")) {
@@ -286,6 +292,8 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
         arrayList.getmInstance().setCurrentDateHolder("noDate");
         arrayList.getmInstance().setChatlist(databaseHandler.getViewForChatFrag());
         MessageInfo.ACTIVEFRIEND_PHONE=null;
+        MessageInfo.frndStatus=null;
+        MessageInfo.frndIP=null;
         Intent intent=new Intent(ChatListActivity.this,MainActivity.class);
         finish();
     }
@@ -296,6 +304,8 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
         unregisterReceiver(messageReceiver);
         unbindService(mConnection);
         MessageInfo.ACTIVEFRIEND_PHONE=null;
+        MessageInfo.frndStatus=null;
+        MessageInfo.frndIP=null;
     }
     @Override
     protected void onResume()
@@ -366,6 +376,7 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
                     Chat_list.add(item);
                     mAdapter.updateAdapter(Chat_list);
                     databaseHandler.updateMessage(active_friend_phone);
+                    mListView.setSelection(Chat_list.size()-1);
                 }
                 else
                     Toast.makeText(context,"New message from "+name,Toast.LENGTH_SHORT).show();
@@ -374,6 +385,7 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
             {
                 if(extra.getString("LASTSEEN").equals("online")) {
                     CustomAcBar_lastSeen.setText("Online");
+                    MessageInfo.frndStatus="Online";
                 }
                 else {
                     String cdate=arrayList.getmInstance().getCurrentDateHolder();
@@ -383,7 +395,10 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
                         CustomAcBar_lastSeen.setText("Seen "+date[1]);
                     else  CustomAcBar_lastSeen.setText("Seen "+date[0]);
                     arrayList.getmInstance().setCurrentDateHolder(cdate);
+                    MessageInfo.frndStatus="Offline";
                 }
+                MessageInfo.frndIP=extra.getString("IP");
+                MessageInfo.frndPort=extra.getString("PORT");
             }
             else if(action.equals("DOWNLOAD_STATUS"))
             {
@@ -492,19 +507,23 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
        final String content=item.getContent();
         final int vis=item.getVisibility();
         String rowId=item.getId();
-        if(item.getType()==(3) ||item.getType()==(1))
-        {
-            if(man_ger.isNetworkConnected())
-            {
+        if(item.getType()==(3) ||item.getType()==(1)) {
                 if (content.startsWith("http://") && vis==0) {
-                    updaeteChatList(content,position,1);
-                    databaseHandler.updateMessage(rowId,1);
-                    man_ger.fileDownload(content,active_friend_phone,item.getId(),position);
-                } else Toast.makeText(ChatListActivity.this,"Not Conected to Inertnet",Toast.LENGTH_SHORT).show();
-            }
+                    if(man_ger.isNetworkConnected()) {
+                        updaeteChatList(content, position, 1);
+                        databaseHandler.updateMessage(rowId, 1);
+                        man_ger.fileDownload(content, active_friend_phone, item.getId(), position);
+                    } else Toast.makeText(ChatListActivity.this,"Not Conected to Inertnet",Toast.LENGTH_SHORT).show();
+                }
+                else if (content.endsWith(".jpg") && vis !=1){
+                    File file = new File(content);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(file),  "image/jpg");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    startActivity(intent);
+                }
         }
-        else if(content.startsWith("http://") && vis!=1)
-        {
+        else if(content.startsWith("http://") && vis!=1) {
             if(man_ger.isNetworkConnected())
             {
                 progres_bar=(ProgressBar)view.findViewById(R.id.simpleProgressBar);
@@ -513,8 +532,7 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
                 man_ger.fileDownload(content,active_friend_phone,item.getId(),position);
             } else Toast.makeText(ChatListActivity.this,"Not Conected to Inertnet",Toast.LENGTH_SHORT).show();
         }
-        else if(content.endsWith(".pdf") && vis !=1)
-        {
+        else if(content.endsWith(".pdf") && vis !=1) {
                try {
                    File file = new File(content);
                    Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -523,7 +541,6 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
                    startActivity(intent);
                }catch (ActivityNotFoundException e){Toast.makeText(context,"No app to perform",Toast.LENGTH_LONG).show();}
         }
-            //else Toast.makeText(context,Chat_list.get(position).imgpath,Toast.LENGTH_LONG).show();
     }
     public void sendMeg(final String msg, final String mType,final String RowId){
         mListView.setSelection(Chat_list.size()-1);
