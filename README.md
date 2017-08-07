@@ -1,5 +1,5 @@
 # MetroIM
- MetroIM is an Android instant messaging application. Designed for Educational Institute.
+ MetroIM is an Android instant messaging application. Designed for educational institute.
  
  #Features
  1. Login,registration,reset password with sms Verification.
