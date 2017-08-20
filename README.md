@@ -12,6 +12,5 @@
  8. View blood donor list, blood donor registration.
  9. Notification.
  
-#Screenshort screenshot
+#Screenshort
 ![Preview](https://raw.githubusercontent.com/anwarhusen@msn.com/MetroIM/master/screenshot/s1.png)
-![alt text](https://raw.githubusercontent.com/anwarhusen@msn.com/MetroIM/master/screenshot/s2.png)
