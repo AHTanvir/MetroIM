@@ -10,6 +10,8 @@
  6. Add,update, view result with cgpa calculator.
  7. Google drive backup.
  8. View blood donor list, blood donor registration.
- 9. Notification
-#Screenshort 
-![Preview](https://raw.githubusercontent.com/anwarhusen@msn.com/MetroIM/master/screenshort/s1.png)
+ 9. Notification.
+ 
+#Screenshort screenshot
+![Preview](https://raw.githubusercontent.com/anwarhusen@msn.com/MetroIM/master/screenshot/s1.png)
+![alt text](https://raw.githubusercontent.com/anwarhusen@msn.com/MetroIM/master/screenshot/s2.png)
