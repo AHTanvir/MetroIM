@@ -14,10 +14,10 @@
  
 #Screenshort
 <p align="center">
-  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshot/s1.png" width="350"/>
-  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshot/s2.png" width="350"/>
-  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshot/s3.png" width="350"/>
-  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshot/s4.png" width="350"/>
-  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshot/s5.png" width="350"/>
-  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshot/s6.png" width="350"/>
+  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshort/s1.png" width="350"/>
+  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshort/s2.png" width="350"/>
+  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshort/s3.png" width="350"/>
+  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshort/s4.png" width="350"/>
+  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshort/s5.png" width="350"/>
+  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshort/s6.png" width="350"/>
 </p>
