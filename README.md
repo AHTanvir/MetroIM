@@ -13,4 +13,7 @@
  9. Notification.
  
 #Screenshort
-![Preview](https://raw.githubusercontent.com/anwarhusen@msn.com/MetroIM/master/screenshot/s1.png)
+<p align="center">
+  <img src="your_relative_path_here" width="350"/>
+  <img src="https://github.com/AHTanvir/MetroIM/master/screenshot/s.png" width="350"/>
+</p>
