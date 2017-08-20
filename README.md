@@ -15,5 +15,5 @@
 #Screenshort
 <p align="center">
   <img src="your_relative_path_here" width="350"/>
-  <img src="https://github.com/AHTanvir/MetroIM/master/screenshot/s1.png" width="350"/>
+  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshot/s1.png" width="350"/>
 </p>
