@@ -2,7 +2,6 @@ package anwar.metroim.PhoneContactSynchronization;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
 
@@ -13,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import anwar.metroim.CustomListView.RowItem;
+import anwar.metroim.Adapter.RowItem;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 
 /**

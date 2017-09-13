@@ -6,10 +6,14 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
+import android.support.annotation.Nullable;
+
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,7 +35,7 @@ import au.com.bytecode.opencsv.CSVWriter;
  * Created by anwar on 4/4/2017.
  */
 
-public class dbBackup implements GDAAConnection.ConnectionCallbacks{
+public class DbBackup implements GoogleApiClient.ConnectionCallbacks{
     private static final String DATABASE_NAME ="MetroimData.db";
     private static final String L_TAG = "_X_";
     private final String MYROOT = "MetroIm";
@@ -43,6 +47,7 @@ public class dbBackup implements GDAAConnection.ConnectionCallbacks{
     private final String GDID = "gdid";
     private final String MIME = "mime",task=null;
     private Context context;
+    private GoogleApiClient.ConnectionCallbacks callbacks;
     private SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private Calendar cal = Calendar.getInstance();
     private String email;
@@ -51,21 +56,26 @@ public class dbBackup implements GDAAConnection.ConnectionCallbacks{
     private boolean ConnectionStatus=true;
     private DatabaseHandler databaseHandle;
     private SharedPreferences spref;
-    private GDAAConnection gdaaConnection=new GDAAConnection();
+    private GDAAConnection gdaaConnection;
 
-    public dbBackup(Context context, String email) {
+    public DbBackup(Context context, String email) {
+        gdaaConnection=new GDAAConnection();
         gdaaConnection.ConnectToDrive(context,email,this);
         this.context = context;
         this.email = email;
         backup_email=new Backup_email(context);
         spref = PreferenceManager.getDefaultSharedPreferences(context);
         databaseHandle=new DatabaseHandler(context);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            System.out.println(" Thread errror--------------->"+e);
-        }
+    }
+
+    public DbBackup(Context context, String email, GoogleApiClient.ConnectionCallbacks callbacks) {
+        gdaaConnection=new GDAAConnection();
+        gdaaConnection.ConnectToDrive(context,email,callbacks);
+        this.context = context;
+        this.email = email;
+        backup_email=new Backup_email(context);
+        spref = PreferenceManager.getDefaultSharedPreferences(context);
+        databaseHandle=new DatabaseHandler(context);
     }
 
     public void crateBackup(){
@@ -180,6 +190,7 @@ public class dbBackup implements GDAAConnection.ConnectionCallbacks{
             csvWrite.close();
             curCSV.close();
         } catch (IOException e) {
+            System.out.println("db----Backup Exception"+e);
         }
         return path;
     }
@@ -238,14 +249,17 @@ public class dbBackup implements GDAAConnection.ConnectionCallbacks{
     }
 
     @Override
-    public void Connected() {
-        System.out.println("is Connected to drive ");
-        isConnected=true;
+    public void onConnected(@Nullable Bundle bundle) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DbBackup.this.crateBackup();
+            }
+        }).start();
     }
 
     @Override
-    public void Failed() {
-        System.out.println("Not connected to drive ");
-        isConnected=false;
+    public void onConnectionSuspended(int i) {
+        System.out.println("DbBackup onConnectionSuspended");
     }
 }

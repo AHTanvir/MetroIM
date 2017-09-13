@@ -13,11 +13,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import anwar.metroim.CustomListView.*;
+import anwar.metroim.Adapter.*;
 import anwar.metroim.PhoneContactSynchronization.PhoneContacts;
 
 

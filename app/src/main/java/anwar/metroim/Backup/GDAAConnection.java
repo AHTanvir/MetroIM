@@ -1,6 +1,5 @@
 package anwar.metroim.Backup;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.content.IntentSender;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -47,17 +45,17 @@ import java.util.ArrayList;
  */
 
 public class GDAAConnection implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
-    private dbBackup backup;
-    private ConnectionCallbacks callbacks;
+    private DbBackup backup;
     private GoogleApiClient googleApiClient;
+    private GoogleApiClient.ConnectionCallbacks listener;
     private boolean conStatus=false;
     private final String GDID = "gdid";
     static final String MIME_FLDR = "application/vnd.google-apps.folder";
     private final String T = "titl";
     private final String MIME = "mime";
-   // private dbBackup dBinterface=new dbBackup();
-    public boolean ConnectToDrive(Context context, String email,dbBackup backup){
-        this.callbacks=(ConnectionCallbacks)backup;
+   // private DbBackup dBinterface=new DbBackup();
+    public boolean ConnectToDrive(Context context, String email,GoogleApiClient.ConnectionCallbacks listener){
+        this.listener=listener;
       if(email !=null)
       {
           try {
@@ -70,7 +68,7 @@ public class GDAAConnection implements GoogleApiClient.ConnectionCallbacks, Goog
                           .addApi(Drive.API)
                           .addScope(Drive.SCOPE_FILE)
                           .addScope(Drive.SCOPE_APPFOLDER)
-                          .addConnectionCallbacks(this)
+                          .addConnectionCallbacks(listener)
                           .addOnConnectionFailedListener(this)
                           .setAccountName(email)
                           .build();
@@ -78,7 +76,7 @@ public class GDAAConnection implements GoogleApiClient.ConnectionCallbacks, Goog
               // Connect the client. Once connected, the camera is launched.
               googleApiClient.connect();
           }catch (Exception e){
-              System.out.println(" Goo errror--------------->"+e);
+              e.printStackTrace();
           }
           return true;
       }
@@ -87,7 +85,6 @@ public class GDAAConnection implements GoogleApiClient.ConnectionCallbacks, Goog
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        this.callbacks.Connected();
     }
 
     @Override
@@ -96,7 +93,7 @@ public class GDAAConnection implements GoogleApiClient.ConnectionCallbacks, Goog
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        this.callbacks.Failed();
+        System.out.println("GDAAConn......onConnectionFailed"+connectionResult);
     }
     public ArrayList<ContentValues> search(String prnId, String titl, String mime) {
         ArrayList<ContentValues> gfs = new ArrayList<>();
@@ -463,9 +460,5 @@ public class GDAAConnection implements GoogleApiClient.ConnectionCallbacks, Goog
         if (gdId != null) cv.put(GDID, gdId);
         if (mime != null) cv.put(MIME, mime);
         return cv;
-    }
-    public interface ConnectionCallbacks{
-        void Connected();
-        void Failed();
     }
 }

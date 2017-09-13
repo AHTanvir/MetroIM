@@ -22,9 +22,9 @@ import android.widget.Toast;
 
 import anwar.metroim.ChatScreen.ChatListActivity;
 import anwar.metroim.CustomImage.getCustomImage;
-import anwar.metroim.CustomListView.CustomAdapter;
-import anwar.metroim.CustomListView.RowItem;
-import anwar.metroim.CustomListView.arrayList;
+import anwar.metroim.Adapter.CustomAdapter;
+import anwar.metroim.Adapter.RowItem;
+import anwar.metroim.Adapter.arrayList;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 import anwar.metroim.PhoneContactSynchronization.IphoneContacts;
 import anwar.metroim.PhoneContactSynchronization.PhoneContacts;

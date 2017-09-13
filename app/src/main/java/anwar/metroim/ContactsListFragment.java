@@ -2,8 +2,6 @@ package anwar.metroim;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,10 +21,9 @@ import android.widget.Toast;
 
 import anwar.metroim.ChatScreen.ChatListActivity;
 import anwar.metroim.CustomImage.getCustomImage;
-import anwar.metroim.CustomListView.*;
+import anwar.metroim.Adapter.*;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static anwar.metroim.MessageInfo.ACTIVEFRIENDPHONE;

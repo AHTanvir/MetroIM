@@ -3,7 +3,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
@@ -25,7 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,11 +33,10 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import anwar.metroim.Backup.dbBackup;
+import anwar.metroim.Backup.DbBackup;
 import anwar.metroim.ChatScreen.ChatListActivity;
 import anwar.metroim.CustomImage.getCustomImage;
-import anwar.metroim.CustomListView.RowItem;
-import anwar.metroim.CustomListView.arrayList;
+import anwar.metroim.Adapter.arrayList;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 import anwar.metroim.LoginActivity;
 import anwar.metroim.Manager.SessionManager;
@@ -269,7 +266,7 @@ public class MetroImservice extends Service implements imanager{
                                        new Thread(new Runnable() {
                                            @Override
                                            public void run() {
-                                               new dbBackup(MetroImservice.this,email).crateBackup();
+                                               new DbBackup(MetroImservice.this,email);
                                            }
                                        }).start();
                                    }

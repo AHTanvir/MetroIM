@@ -1,6 +1,5 @@
 package anwar.metroim;
 
-import android.accounts.AccountManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,10 +10,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.design.widget.TabLayout;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,22 +23,18 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
-import com.soundcloud.android.crop.Crop;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 
-import anwar.metroim.Backup.Backup_email;
-import anwar.metroim.Backup.dbBackup;
-import anwar.metroim.CustomListView.arrayList;
+import anwar.metroim.Backup.DbBackup;
+import anwar.metroim.Adapter.arrayList;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 import anwar.metroim.Manager.SessionManager;
 import anwar.metroim.service.MetroImservice;
 import anwar.metroim.service.imanager;
-
-import static android.app.Activity.RESULT_OK;
-import static anwar.metroim.R.id.Relative_layoutfor_fragments;
 
 
 /**
@@ -73,6 +66,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener{
     private OnFragmentInteractionListener mListener;
     private  SharedPreferences spref;
     private boolean isServiceBound=false;
+    private DbBackup dbBackup;
     private ServiceConnection mConnection = new ServiceConnection() {
 
 
@@ -274,24 +268,32 @@ public class SettingFragment extends Fragment implements View.OnClickListener{
             case R.id.RestoreBackup:
                 if(man_ger.isNetworkConnected())
                 {
-                    new Thread(new Runnable() {
-                        Handler handler=new Handler();
-                        boolean result;
+                    final Handler handler=new Handler();
+                    dbBackup=new DbBackup(getActivity(), man_ger.getBackupEmail(), new GoogleApiClient.ConnectionCallbacks() {
                         @Override
-                        public void run() {
-                            result=new dbBackup(getActivity(),man_ger.getBackupEmail()).RestoreBackup();
-                            handler.post(new Runnable() {
+                        public void onConnected(@Nullable Bundle bundle) {
+                            new Thread(new Runnable() {
+                                boolean  result;
                                 @Override
                                 public void run() {
-                                    if(result){
-                                        Toast.makeText(getActivity(),"Restore Successful",Toast.LENGTH_SHORT).show();
-                                        arrayList.getmInstance().setChatlist(new DatabaseHandler(getActivity()).getViewForChatFrag());
-                                    } else Toast.makeText(getActivity(),"Restore Failed",Toast.LENGTH_SHORT).show();
-
+                                  result=dbBackup.RestoreBackup();
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if(result){
+                                                Toast.makeText(getActivity(),"Restore Successful",Toast.LENGTH_SHORT).show();
+                                                arrayList.getmInstance().setChatlist(new DatabaseHandler(getActivity()).getViewForChatFrag());
+                                            } else Toast.makeText(getActivity(),"Restore Failed",Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
-                            });
+                            }).start();
                         }
-                    }).start();
+                        @Override
+                        public void onConnectionSuspended(int i) {
+
+                        }
+                    });
                 } else Toast.makeText(getActivity(),"Not Conected to Inertnet",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.settingFrag_back:

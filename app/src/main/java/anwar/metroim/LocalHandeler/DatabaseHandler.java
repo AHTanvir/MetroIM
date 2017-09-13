@@ -2,34 +2,25 @@ package anwar.metroim.LocalHandeler;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
-import android.provider.ContactsContract;
 import android.text.format.DateUtils;
-import android.widget.Toast;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.jar.Pack200;
 
-import anwar.metroim.ChatScreen.ChatListActivity;
 import anwar.metroim.CustomImage.getCustomImage;
-import anwar.metroim.CustomListView.ChatAdapter;
-import anwar.metroim.CustomListView.ChatModel;
-import anwar.metroim.CustomListView.RowItem;
-import anwar.metroim.CustomListView.arrayList;
-import anwar.metroim.MainActivity;
+import anwar.metroim.Adapter.ChatModel;
+import anwar.metroim.Adapter.RowItem;
+import anwar.metroim.Adapter.arrayList;
 import anwar.metroim.R;
 
 /**

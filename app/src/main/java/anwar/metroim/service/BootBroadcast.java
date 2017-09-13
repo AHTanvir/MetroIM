@@ -6,10 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.widget.Toast;
 
-import anwar.metroim.CustomListView.arrayList;
-import anwar.metroim.MainActivity;
+import anwar.metroim.Adapter.arrayList;
 import anwar.metroim.Manager.SessionManager;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;

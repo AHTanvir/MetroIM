@@ -41,8 +41,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import anwar.metroim.CustomListView.RowItem;
-import anwar.metroim.CustomListView.DonorRecyclerAdapter;
+import anwar.metroim.Adapter.RowItem;
+import anwar.metroim.Adapter.DonorRecyclerAdapter;
 import anwar.metroim.MainActivity;
 import anwar.metroim.PhoneContactSynchronization.IphoneContacts;
 import anwar.metroim.PhoneContactSynchronization.PhoneContacts;

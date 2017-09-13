@@ -2,7 +2,6 @@ package anwar.metroim;
 
 
 import android.accounts.AccountManager;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -11,18 +10,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.support.design.widget.TabItem;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.View;
@@ -40,46 +36,33 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 
 import anwar.metroim.Backup.Backup_email;
-import anwar.metroim.Backup.dbBackup;
+import anwar.metroim.Backup.DbBackup;
 import anwar.metroim.BloodDonor.donorActivity;
 import anwar.metroim.CustomImage.getCustomImage;
-import anwar.metroim.CustomImage.CompressImage;
-import anwar.metroim.CustomListView.CustomAdapter;
-import anwar.metroim.CustomListView.RowItem;
-import anwar.metroim.CustomListView.arrayList;
+import anwar.metroim.Adapter.arrayList;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 import anwar.metroim.Manager.SessionManager;
-import anwar.metroim.PhoneContactSynchronization.IphoneContacts;
-import anwar.metroim.PhoneContactSynchronization.PhoneContacts;
 import anwar.metroim.service.BootBroadcast;
 import anwar.metroim.service.imanager;
 import anwar.metroim.service.MetroImservice;
-import org.apache.commons.codec.binary.Base64;
-import static android.R.attr.data;
+
 import static anwar.metroim.ChatScreen.ChatListActivity.currentDateHolder;
 import static anwar.metroim.R.id.Relative_layoutfor_fragments;
 import static anwar.metroim.service.MetroImservice.LIST_UPDATED;
@@ -104,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AlertDialog.Builder updateStatusDialog;
     private Calendar ca = Calendar.getInstance();
     private getCustomImage getCustomImage;
+    private DbBackup dbBackup;
    private ServiceConnection mConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -296,12 +280,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.msg_Backup) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                   new dbBackup(MainActivity.this,"anwarhusen128@gmail.com").crateBackup() ;
-                }
-            }).start();
+                   dbBackup=new DbBackup(MainActivity.this, man_ger.getBackupEmail(), new GoogleApiClient.ConnectionCallbacks() {
+                       @Override
+                       public void onConnected(@Nullable Bundle bundle) {
+                                 new Thread(new Runnable() {
+                                     @Override
+                                     public void run() {
+                                         dbBackup.crateBackup();
+                                     }
+                                 }).start();
+                       }
+                       @Override
+                       public void onConnectionSuspended(int i) {
+                           System.out.println("db-- suspe");
+                       }
+                   });
         } else if (id == R.id.nav_donation_result) {
             view_Frag = "nn";
             tabLayout.setVisibility(View.GONE);

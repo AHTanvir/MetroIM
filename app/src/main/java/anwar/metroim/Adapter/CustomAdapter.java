@@ -1,4 +1,4 @@
-package anwar.metroim.CustomListView;
+package anwar.metroim.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,7 +10,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;

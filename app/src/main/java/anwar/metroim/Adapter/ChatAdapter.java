@@ -1,9 +1,7 @@
-package anwar.metroim.CustomListView;
+package anwar.metroim.Adapter;
 
-import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -14,8 +12,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import anwar.metroim.CustomImage.getCustomImage;
-import anwar.metroim.CustomListView.ChatModel;
 import anwar.metroim.R;
 
 /**
