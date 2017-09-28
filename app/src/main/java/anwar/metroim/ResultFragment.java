@@ -30,7 +30,7 @@ import java.util.List;
 
 import anwar.metroim.Adapter.RecyclerItemClickListener;
 import anwar.metroim.Adapter.ResultRecyclerAdapter;
-import anwar.metroim.Adapter.RowItem;
+import anwar.metroim.Model.RowItem;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 
 
@@ -260,18 +260,15 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
               ShowAddResultDialog("Insert Result","Insert");
               break;
           case R.id.add_result_OkButton:
-              if(InsertResult.getText().equals("Insert"))
-              {
-                  if(addSub.length()>2 &&addGpa.length()>0 &&addGpa.length()>0)
-                  {
+              if(InsertResult.getText().equals("Insert")) {
+                  if(addSub.length()>2 &&addGpa.length()>0 &&addGpa.length()>0) {
                      dialog.dismiss();
                       databaseHandler.addResult(addSub.getText().toString(),addCredit.getText().toString(),addGpa.getText().toString());
                   }
                   else Toast.makeText(getActivity(),"Fill all field",Toast.LENGTH_SHORT).show();
               }
               else{
-                  if(addSub.length()>2 &&addGpa.length()>0 &&addGpa.length()>0)
-                  {
+                  if(addSub.length()>2 &&addGpa.length()>0 &&addGpa.length()>0){
                       databaseHandler.updateResult(addSub.getText().toString(),addCredit.getText().toString(),addGpa.getText().toString());
                       dialog.dismiss();
                   }
@@ -300,8 +297,6 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
         cancel=(Button)alertLayout.findViewById(R.id.add_result_calcelButton);
         InsertResult.setText(buttonAction);
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-       //alert.setTitle(titel);
-        // this is set the view from XML inside AlertDialog
         TextView ct = new TextView(getActivity());
         ct.setText(titel);
         ct.setBackgroundColor(Color.DKGRAY);
@@ -311,7 +306,6 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
         ct.setTextSize(20);
         alert.setCustomTitle(ct);
         alert.setView(alertLayout);
-        // disallow cancel of AlertDialog on click of back button and outside touch
         alert.setCancelable(true);
         InsertResult.setOnClickListener(this);
         cancel.setOnClickListener(this);

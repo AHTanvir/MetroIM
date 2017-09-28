@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import anwar.metroim.Adapter.RowItem;
+import anwar.metroim.Model.RowItem;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 
 /**

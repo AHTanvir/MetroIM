@@ -16,7 +16,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import anwar.metroim.Adapter.*;
+import anwar.metroim.Model.RowItem;
 import anwar.metroim.PhoneContactSynchronization.PhoneContacts;
 
 

@@ -34,7 +34,7 @@ import anwar.metroim.Adapter.arrayList;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 import anwar.metroim.Manager.SessionManager;
 import anwar.metroim.service.MetroImservice;
-import anwar.metroim.service.imanager;
+import anwar.metroim.service.Iappmanager;
 
 
 /**
@@ -54,7 +54,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener{
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private imanager man_ger;
+    private Iappmanager man_ger;
     private static final int PICKEMAIL=5;
     private   String result=null,backupEmail;
     private Button backBtn,changNameBtn,changPassBtn,deleteAccu,add_backup_email,restoreBackup;

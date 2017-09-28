@@ -3,16 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="anwar.metroim.ChatListFragment">
-
     <!-- TODO: Update blank fragment layout -->
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
+        android:background="#638f58"
         android:layout_height="match_parent"
         android:id="@+id/chat_list"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_marginTop="45dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"/>
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"/>
 </RelativeLayout>

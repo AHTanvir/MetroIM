@@ -10,11 +10,9 @@ import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,7 +26,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import anwar.metroim.BloodDonor.donorActivity;
 import anwar.metroim.PhoneContactSynchronization.IphoneContacts;
 import anwar.metroim.PhoneContactSynchronization.PhoneContacts;
 import anwar.metroim.service.*;
@@ -48,7 +45,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private AutoCompleteTextView tf_dept;
     private Button btn_singup,resend,ok;
     private EditText tf_name,tf_email,tf_password,tf_id,tf_phone,veri_code;
-    private imanager man_ger;
+    private Iappmanager man_ger;
     private Handler handler = new Handler();
     private String deptList[]=new String[]{"CSE","EEE","BBA","LLB","EC0"};
     private IphoneContacts iphoneContacts=new PhoneContacts();

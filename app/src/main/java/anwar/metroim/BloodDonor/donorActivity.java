@@ -41,14 +41,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import anwar.metroim.Adapter.RowItem;
+import anwar.metroim.Model.RowItem;
 import anwar.metroim.Adapter.DonorRecyclerAdapter;
 import anwar.metroim.MainActivity;
 import anwar.metroim.PhoneContactSynchronization.IphoneContacts;
 import anwar.metroim.PhoneContactSynchronization.PhoneContacts;
 import anwar.metroim.R;
 import anwar.metroim.service.MetroImservice;
-import anwar.metroim.service.imanager;
+import anwar.metroim.service.Iappmanager;
 
 public class donorActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,View.OnClickListener {
     private Spinner spinner,dspinner;
@@ -67,7 +67,7 @@ public class donorActivity extends AppCompatActivity implements AdapterView.OnIt
     private Calendar calander = Calendar.getInstance();
     private String result;
     private Button backBtn;
-    private imanager man_ger = new MetroImservice();
+    private Iappmanager man_ger = new MetroImservice();
     private  IphoneContacts iphoneContacts=new PhoneContacts();
     private List<RowItem> rowitem = new ArrayList<>();
     Context context;

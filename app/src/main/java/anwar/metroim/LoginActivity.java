@@ -1,17 +1,12 @@
 package anwar.metroim;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -21,19 +16,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.xml.sax.helpers.LocatorImpl;
-
 import java.io.UnsupportedEncodingException;
-import java.security.Permission;
 
-import anwar.metroim.Manager.MultiplePermissions;
 import anwar.metroim.Manager.SessionManager;
 import anwar.metroim.Manager.UpdaterManagerActivity;
 import anwar.metroim.PhoneContactSynchronization.IphoneContacts;
 import anwar.metroim.PhoneContactSynchronization.PhoneContacts;
-import anwar.metroim.service.BootBroadcast;
 import anwar.metroim.service.MetroImservice;
-import anwar.metroim.service.imanager;
+import anwar.metroim.service.Iappmanager;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener,View.OnTouchListener {
     public static final String NO_NEW_UPDATE="9";
@@ -44,7 +34,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView tv_forgetpassword;
     private Context context;
     private boolean visibility=false;
-    private imanager man_ger=new MetroImservice();
+    private Iappmanager man_ger=new MetroImservice();
     private SessionManager session;
     IphoneContacts iphoneContacts=new PhoneContacts();
     private ServiceConnection mConnection = new ServiceConnection() {

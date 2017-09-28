@@ -6,7 +6,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.ListPopupWindow;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,16 +22,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import anwar.metroim.Adapter.ChatFragmentAdapter;
 import anwar.metroim.ChatScreen.ChatListActivity;
 import anwar.metroim.CustomImage.getCustomImage;
 import anwar.metroim.Adapter.CustomAdapter;
-import anwar.metroim.Adapter.RowItem;
+import anwar.metroim.Interface.OnItemClickListeners;
+import anwar.metroim.Model.ChatListModel;
+import anwar.metroim.Model.RowItem;
 import anwar.metroim.Adapter.arrayList;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 import anwar.metroim.PhoneContactSynchronization.IphoneContacts;
 import anwar.metroim.PhoneContactSynchronization.PhoneContacts;
-
-import static anwar.metroim.ContactsListFragment.mLastFirstVisibleItem;
 import static anwar.metroim.MessageInfo.ACTIVEFRIENDPHONE;
 
 
@@ -41,7 +44,7 @@ import static anwar.metroim.MessageInfo.ACTIVEFRIENDPHONE;
  * Use the {@link ChatListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ChatListFragment extends Fragment implements OnItemClickListener,AdapterView.OnItemLongClickListener ,AbsListView.OnScrollListener{
+public class ChatListFragment extends Fragment implements OnItemClickListeners{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -50,9 +53,10 @@ public class ChatListFragment extends Fragment implements OnItemClickListener,Ad
     private arrayList arraylist=new arrayList();
     // TODO: Rename and change types of parameters
     private String mParam1;
-    private CustomAdapter adapter;
+    private ChatFragmentAdapter adapter;
+    private LinearLayoutManager layoutManager;
     private String mParam2;
-    private ListView chat_list;
+    private RecyclerView recyclerView;
     DatabaseHandler databaseHandler;
     private ListPopupWindow popupWindow;
     private OnFragmentInteractionListener mListener;
@@ -97,11 +101,8 @@ public class ChatListFragment extends Fragment implements OnItemClickListener,Ad
         Context context = inflater.getContext();
         main=((MainActivity)getActivity());
         databaseHandler=new DatabaseHandler(getActivity());
-        chat_list=(ListView)view.findViewById(R.id.chat_list);
+        recyclerView=(RecyclerView) view.findViewById(R.id.chat_list);
         updateListitm();
-        chat_list.setOnItemClickListener(this);
-        chat_list.setOnItemLongClickListener(this);
-        chat_list.setOnScrollListener(this);
         /*
         ListView chat_list=(ListView)view.findViewById(R.id.chat_list);
         ArrayAdapter<String> allItemsAdapter = new ArrayAdapter<String>(getActivity(
@@ -113,8 +114,10 @@ public class ChatListFragment extends Fragment implements OnItemClickListener,Ad
 
     private void updateListitm() {
        // databaseHandler.getViewForChatFrag();
-        adapter = new CustomAdapter(getActivity(),arraylist.getmInstance().getChatlist());
-        chat_list.setAdapter(adapter);
+        adapter = new ChatFragmentAdapter(arraylist.getmInstance().getChatlist(),this);
+        layoutManager=new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
         // profile_picture.recycle();
         //adapter.updateAdapter();
     }
@@ -147,49 +150,6 @@ public class ChatListFragment extends Fragment implements OnItemClickListener,Ad
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        databaseHandler=new DatabaseHandler(getActivity());
-        RowItem itm=(RowItem)parent.getItemAtPosition(position);
-        String member_phone=itm.getContact_number();
-        Intent i=new Intent(getActivity(), ChatListActivity.class);
-        i.putExtra(MessageInfo.NAME,itm.getContact_name());
-        i.putExtra(MessageInfo.IMAGE,new getCustomImage().base64Encode(itm.getPro_image()));
-        i.putExtra(ACTIVEFRIENDPHONE,member_phone);
-        startActivity(i);
-    }
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-       final RowItem itm=(RowItem)parent.getItemAtPosition(position);
-        final String []arr={"View Profile","Delete Chat"};
-        popupWindow = new ListPopupWindow(getActivity());
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.list_item,arr);
-        popupWindow.setAnchorView(view.findViewById(R.id.contact_name));
-        popupWindow.setAdapter(arrayAdapter);
-        popupWindow.setWidth(250);
-        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.color.white));
-        // note: don't use pixels, use a dimen resource// the callback for when a list item is selected
-        popupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                popupWindow.dismiss();
-               if(arr[position]=="View Profile")
-               {
-                   ((MainActivity)getActivity()).viewFriendInfo("&getFriendInfo=",itm.getContact_number(),itm.getContact_name(),getActivity());
-                   Toast.makeText(getActivity(),"View",Toast.LENGTH_SHORT).show();
-               }else {
-                   Toast.makeText(getActivity(),"Delete",Toast.LENGTH_SHORT).show();
-                   databaseHandler.deleteMessage(itm.getContact_number());
-                   arrayList.getmInstance().setChatlist(databaseHandler.getViewForChatFrag());
-                   updateListitm();
-               }
-
-            }
-        });
-        popupWindow.show();
-        return true;
-    }
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         // TODO Add your menu entries here
@@ -212,34 +172,51 @@ public class ChatListFragment extends Fragment implements OnItemClickListener,Ad
                 return false;
             }
         });
-        /*
-        inputSearch = (EditText)v.findViewById(R.id.inputSearch);
-
-        inputSearch.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // TODO Auto-generated method stub
-                // clientAdapter.getFilter().filter(s.toString());
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count,
-                                          int after) {
-                // TODO Auto-generated method stub
-                // ListData.this.clientAdapter.getFilter().filter(s);
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before,
-                                      int count) {
-                // TODO Auto-generated method stub
-
-              //  adapter.getFilter().filter(s.toString());
-
-            }
-
-        });
-*/
     }
+
+    @Override
+    public void onClick(View v, int position) {
+        databaseHandler=new DatabaseHandler(getActivity());
+        ChatListModel itm=(ChatListModel) adapter.getItem(position);
+        String member_phone=itm.getNumber();
+        Intent i=new Intent(getActivity(), ChatListActivity.class);
+        i.putExtra(MessageInfo.NAME,itm.getName());
+        i.putExtra(MessageInfo.IMAGE,new getCustomImage().base64Encode(itm.getImage()));
+        i.putExtra(ACTIVEFRIENDPHONE,member_phone);
+        startActivity(i);
+    }
+
+    @Override
+    public void onLongClick(View v, int position) {
+        final ChatListModel itm=(ChatListModel) adapter.getItem(position);
+        final String []arr={"View Profile","Delete Chat"};
+        popupWindow = new ListPopupWindow(getActivity());
+        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.list_item,arr);
+        popupWindow.setAnchorView(v.findViewById(R.id.contact_name));
+        popupWindow.setAdapter(arrayAdapter);
+        popupWindow.setWidth(250);
+        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.color.white));
+        // note: don't use pixels, use a dimen resource// the callback for when a list item is selected
+        popupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                popupWindow.dismiss();
+                if(arr[position]=="View Profile")
+                {
+                    ((MainActivity)getActivity()).viewFriendInfo("&getFriendInfo=",itm.getNumber(),itm.getName(),getActivity());
+                    Toast.makeText(getActivity(),"View",Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(getActivity(),"Delete",Toast.LENGTH_SHORT).show();
+                    databaseHandler.deleteMessage(itm.getNumber());
+                    arrayList.getmInstance().setChatlist(databaseHandler.getViewForChatFrag());
+                    updateListitm();
+                }
+
+            }
+        });
+        popupWindow.show();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -254,26 +231,7 @@ public class ChatListFragment extends Fragment implements OnItemClickListener,Ad
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
 
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (view.getId() == chat_list.getId()) {
-            final int currentFirstVisibleItem = chat_list.getFirstVisiblePosition();
-
-            if (currentFirstVisibleItem > mLastFirstVisibleItem) {
-                // getSherlockActivity().getSupportActionBar().hide();
-                ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-            } else if (currentFirstVisibleItem < mLastFirstVisibleItem) {
-                // getSherlockActivity().getSupportActionBar().show();
-                ((AppCompatActivity) getActivity()).getSupportActionBar().show();
-            }
-            mLastFirstVisibleItem = currentFirstVisibleItem;
-        }
-    }
 
     @Override
     public void onResume() {

@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +22,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
@@ -35,6 +38,7 @@ import android.view.MotionEvent;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,23 +64,25 @@ import anwar.metroim.Adapter.arrayList;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 import anwar.metroim.Manager.SessionManager;
 import anwar.metroim.service.BootBroadcast;
-import anwar.metroim.service.imanager;
+import anwar.metroim.service.Iappmanager;
 import anwar.metroim.service.MetroImservice;
 
 import static anwar.metroim.ChatScreen.ChatListActivity.currentDateHolder;
 import static anwar.metroim.R.id.Relative_layoutfor_fragments;
+import static anwar.metroim.R.id.center_horizontal;
 import static anwar.metroim.service.MetroImservice.LIST_UPDATED;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TabLayout.OnTabSelectedListener {
     private TabLayout tabLayout;
     private ImageView profile_image;
-    private imanager man_ger=new MetroImservice();
+    private Iappmanager man_ger=new MetroImservice();
     public static Bitmap images = null;
     private String image_str;
     private String jobject;
     private TextView Profile_name, Profile_phone;
     private String view_Frag ="not",currentFragment="not";
     private int selectedtab=3;
+    private  AlertDialog alertDialog;
     private DatabaseHandler databaseHandler;
     private SessionManager session;
     private Handler handeler = new Handler();
@@ -164,7 +170,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         HashMap<String, String> user = session.getUserDetails();
         st=user.get(SessionManager.KEY_STATUS);
         ph=user.get(SessionManager.KEY_PHOTO);
-        //System.out.println("Main ph"+ph);
         nam=user.get(SessionManager.KEY_NAME);
         Profile_name.setText(nam);
         Profile_phone.setText(user.get(SessionManager.KEY_PHONE));
@@ -234,8 +239,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START))
-        {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
         else {
@@ -306,7 +310,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Intent intent = new Intent(this, donorActivity.class);
             finish();
             startActivity(intent);
-
         }
         else if(id==R.id.nav_setting){
             view_Frag = "nn";
@@ -353,8 +356,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
        // Toast.makeText(MainActivity.this,result.toString()+ result.getStringExtra(AccountManager.KEY_ACCOUNT_NAME), Toast.LENGTH_LONG).show();
-        if(result !=null)
-        {
+        if(result !=null) {
             if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
                 beginCrop(result.getData());
             } else if (requestCode == Crop.REQUEST_CROP) {
@@ -399,15 +401,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } catch (JSONException e) {
             e.printStackTrace();
         }
-       new Thread() {
+        new Thread() {
             public void run() {
                 try {
                     result = man_ger.updateInfo( "&photo=" + URLEncoder.encode(jobject,"UTF-8")+ "&");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                if (result !=null)
-                {
+                if (result !=null) {
                     handeler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -428,9 +429,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void showUpdateStatusDialog() {
         String[] status = {"Availble", "Busy", "Other"};
-        updateStatusDialog = new AlertDialog.Builder(MainActivity.this);
-        updateStatusDialog.setTitle("Update Status");
-        final AutoCompleteTextView auto_text = new AutoCompleteTextView(MainActivity.this);
+        updateStatusDialog = new AlertDialog.Builder(MainActivity.this,R.style.MyAlertDialogTheme);
+        LayoutInflater li = LayoutInflater.from(this);
+        final View promptsView = li.inflate(R.layout.update_status, null);
+        final AutoCompleteTextView auto_text=(AutoCompleteTextView)promptsView.findViewById(R.id.auto_text);
+        final Button update_btn =(Button)promptsView.findViewById(R.id.btn_update);
          ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_dropdown_item_1line, status);
         auto_text.setInputType(InputType.TYPE_CLASS_TEXT);
         auto_text.setText(st);
@@ -442,12 +445,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
         auto_text.setThreshold(1);
-        final Button update_btn = new Button(this);
-        updateStatusDialog.setView(auto_text);
+        updateStatusDialog.setView(promptsView);
         auto_text.setAdapter(adapter);
-        updateStatusDialog.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+        update_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
                 new Thread(new Runnable() {
                     @Override
 
@@ -458,8 +460,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                         }
-                        if (result !=null)
-                        {
+                        if (result !=null) {
                             handeler.post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -472,10 +473,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                     }
                 }).start();
-
             }
         });
         updateStatusDialog.show();
+    }
+    void di(){
+        LayoutInflater li = LayoutInflater.from(this);
+        final View promptsView = li.inflate(R.layout.update_status, null);
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setView(promptsView);
+        final AutoCompleteTextView tv=(AutoCompleteTextView) promptsView.findViewById(R.id.auto_text);
+        final Button btn_update=(Button)promptsView.findViewById(R.id.btn_update);
+        final Button btn_cancel=(Button)promptsView.findViewById(R.id.btn_cancel);
+        btn_update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     //when you click view profile in fragment this method will be invoked and contactViewFragment will be visiable
     public  void viewFriendInfo(final String req, final String value, final String name,Context con){

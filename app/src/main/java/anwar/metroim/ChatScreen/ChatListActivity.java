@@ -47,7 +47,7 @@ import android.widget.Toast;
 import anwar.metroim.CustomImage.CompressImage;
 import anwar.metroim.CustomImage.getCustomImage;
 import anwar.metroim.Adapter.ChatAdapter;
-import anwar.metroim.Adapter.ChatModel;
+import anwar.metroim.Model.ChatModel;
 
 import anwar.metroim.Adapter.arrayList;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
@@ -57,7 +57,7 @@ import anwar.metroim.MessageInfo;
 import anwar.metroim.PhoneContactSynchronization.StoreContacts;
 import anwar.metroim.R;
 import anwar.metroim.service.MetroImservice;
-import anwar.metroim.service.imanager;
+import anwar.metroim.service.Iappmanager;
 
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
@@ -84,7 +84,7 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
     private ImageView toolbar_imageView;
     private TextView CustomAcBar_name,CustomAcBar_lastSeen;
     private Button Chat_send_button,toolbar_backButton;
-    private imanager man_ger;
+    private Iappmanager man_ger;
     public  static String currentDateHolder="date";
     private String active_friend_phone;
     private String active_friend_name;
@@ -340,6 +340,7 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
                 String date=extra.getString(MessageInfo.SENDATE);
                 String type=extra.getString(MessageInfo.MESSAGE_TYPE);
                 String msg=extra.getString(MessageInfo.MESSAGE_LIST);
+                System.out.println("new messsgs from "+userPhone +" user "+active_friend_phone);
                 if(active_friend_phone.equals(userPhone))
                 {
                     String datearr[];
@@ -398,8 +399,8 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
                     Toast.makeText(context,"Message can't be send",Toast.LENGTH_SHORT).show();
                     mAdapter.updateAdapter(databaseHandler.getMessage(active_friend_phone));
                 }
-                arrayList.getmInstance().setChatlist(databaseHandler.getViewForChatFrag());
             }
+            arrayList.getmInstance().setChatlist(databaseHandler.getViewForChatFrag());
         }
     };
     private MessageReceiver messageReceiver =new MessageReceiver();

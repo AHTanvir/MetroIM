@@ -7,6 +7,8 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
+import anwar.metroim.Model.RowItem;
+
 /**
  * Created by anwar on 3/30/2017.
  */

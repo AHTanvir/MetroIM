@@ -3,6 +3,9 @@ package anwar.metroim.Adapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import anwar.metroim.Model.ChatListModel;
+import anwar.metroim.Model.RowItem;
+
 /**
  * Created by anwar on 3/30/2017.
  */
@@ -10,7 +13,7 @@ import java.util.List;
 public class arrayList {
     private boolean serviceIsRunning=false;
     private  static arrayList mInstance;;
-    private List<RowItem> chatlist;
+    private List<ChatListModel> chatlist;
     private List<RowItem> contactlist;
     private String  currentDateHolder;
     public arrayList(){
@@ -25,11 +28,11 @@ public class arrayList {
         }
         return mInstance;
     }
-    public List<RowItem> getChatlist() {
+    public List<ChatListModel> getChatlist() {
         return this.chatlist;
     }
 
-    public void setChatlist(List<RowItem> chatlist) {
+    public void setChatlist(List<ChatListModel> chatlist) {
         this.chatlist = chatlist;
     }
 

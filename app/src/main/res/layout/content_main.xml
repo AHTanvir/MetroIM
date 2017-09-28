@@ -16,8 +16,6 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:id="@+id/tab_view">
-
-
         <android.support.design.widget.TabItem
             android:id="@+id/chat_tab"
             android:layout_width="wrap_content"

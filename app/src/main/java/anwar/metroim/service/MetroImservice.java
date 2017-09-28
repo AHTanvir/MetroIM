@@ -51,16 +51,17 @@ import anwar.metroim.socketOperation.*;
  * Created by anwar on 12/5/2016.
  */
 
-public class MetroImservice extends Service implements imanager{
+public class MetroImservice extends Service implements Iappmanager {
     public static final String TAKE_MESSAGE = "Take_Message";
     public static final String LIST_UPDATED = "List_Upadate";
     public ConnectivityManager conManager = null;
     private final int UPDATE_TIME_PERIOD = 15000;
+    private Iappmanager Iappmanager;
     private getCustomImage customImages=new getCustomImage();
     private Calendar calander = Calendar.getInstance();
     private DateFormat dbfmtDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private SessionManager session;
-    private SocketInterface socketOperator = new socketConnection(this);
+    private SocketInterface socketOperator = new SocketConnection(this);
     private DatabaseHandler databaseHandler = new DatabaseHandler(this);
     private final IBinder mBinder = new IMBinder();
     private String userphone;
@@ -70,7 +71,7 @@ public class MetroImservice extends Service implements imanager{
     private SharedPreferences spre;
     private Timer timer=null;
     public class IMBinder extends Binder {
-        public imanager getService() {
+        public Iappmanager getService() {
             return MetroImservice.this;
         }
 
@@ -87,7 +88,7 @@ public class MetroImservice extends Service implements imanager{
             public void run() {
                 Random random = new Random();
                 int tryCount = 0;
-                while (socketOperator.startListening(10000 + random.nextInt(20000),MetroImservice.this) == 0) {
+                while (socketOperator.startListening(1000 + random.nextInt(2000),MetroImservice.this) == 0) {
                     tryCount++;
                     if (tryCount > 10) {
                         // if it can't listen a port after trying 10 times, give up...
@@ -101,12 +102,11 @@ public class MetroImservice extends Service implements imanager{
     }
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("LocalService", "Received start id " + startId + ": " + intent);
-    /*    if(socketOperator ==null)
-        {
+        if(socketOperator ==null && timer ==null) {
             timer=new Timer();
-            socketOperator=new socketConnection(this);
+            socketOperator=new SocketConnection(this);
             databaseHandler = new DatabaseHandler(this);
-        }*/
+        }
         arrayList.getmInstance().setServiceIsRunning(true);
          spre = PreferenceManager.getDefaultSharedPreferences(this);
         if(setUserId()){
@@ -150,8 +150,7 @@ public class MetroImservice extends Service implements imanager{
 
     public String getMessage() throws UnsupportedEncodingException {
         String result =socketOperator.sendHttpRequest(getAuthenticateUserParams(this.userphone,this.password));
-        if(result !=LoginActivity.NO_NEW_UPDATE)
-        {
+        if(result !=LoginActivity.NO_NEW_UPDATE) {
             this.decodeMessage(result);
         }
         return result;
@@ -170,7 +169,7 @@ public class MetroImservice extends Service implements imanager{
                     "&message=" + URLEncoder.encode(message, "UTF-8") +
                     "&";
             if(MessageInfo.frndStatus!=null && MessageInfo.frndStatus=="Online")
-                result=socketOperator.sendDirectMsg(to,date,mType,message);
+                result=socketOperator.sendDirectMsg(this.userphone,date,mType,message);
             if (result=="0")
                 result = socketOperator.sendHttpRequest(params);
         }

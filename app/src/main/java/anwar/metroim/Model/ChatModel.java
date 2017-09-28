@@ -1,4 +1,4 @@
-package anwar.metroim.Adapter;
+package anwar.metroim.Model;
 
 /**
  * Created by anwar on 2/2/2017.

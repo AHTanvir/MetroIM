@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import anwar.metroim.Model.ChatModel;
 import anwar.metroim.R;
 
 /**

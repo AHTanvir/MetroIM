@@ -1,27 +1,14 @@
 package anwar.metroim.Manager;
 
-import android.Manifest;
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.content.ComponentName;
-import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.OperationApplicationException;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.RemoteException;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,19 +18,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 import anwar.metroim.MainActivity;
 import anwar.metroim.PhoneContactSynchronization.IphoneContacts;
 import anwar.metroim.PhoneContactSynchronization.PhoneContacts;
 import anwar.metroim.R;
-import anwar.metroim.service.BootBroadcast;
 import anwar.metroim.service.MetroImservice;
-import anwar.metroim.service.imanager;
+import anwar.metroim.service.Iappmanager;
 
 public class UpdaterManagerActivity extends AppCompatActivity {
     private ImageView splash_img;
@@ -58,7 +40,7 @@ public class UpdaterManagerActivity extends AppCompatActivity {
     private DatabaseHandler databaseHandler;
     private Button btn_login,btn_register;
     private TextView login_phone,login_password;
-    private imanager man_ger=new MetroImservice();
+    private Iappmanager man_ger=new MetroImservice();
     public static int count=0;
     public static String ss;
     private static final String TAG = "Contacts";

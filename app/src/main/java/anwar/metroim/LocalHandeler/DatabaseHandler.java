@@ -12,14 +12,16 @@ import android.text.format.DateUtils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import anwar.metroim.CustomImage.getCustomImage;
-import anwar.metroim.Adapter.ChatModel;
-import anwar.metroim.Adapter.RowItem;
+import anwar.metroim.Model.ChatListModel;
+import anwar.metroim.Model.ChatModel;
+import anwar.metroim.Model.RowItem;
 import anwar.metroim.Adapter.arrayList;
 import anwar.metroim.R;
 
@@ -31,6 +33,7 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IDatabaseHandle
     Calendar calander = Calendar.getInstance();
     DateFormat dataBaseStoreFormate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     DateFormat simpleDateFormat = new java.text.SimpleDateFormat("dd-MMM-yy");
+    private SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM");
     DateFormat simpleTimeFormat=new java.text.SimpleDateFormat("hh:mm a");
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME ="MetroimData.db";
@@ -281,7 +284,7 @@ private getCustomImage CusImg=new getCustomImage();
         return cursor.getCount();
     }
     public List getViewForChatFrag(){
-        rowItems=new ArrayList<>();
+        List<ChatListModel>rowItems=new ArrayList<>();
         rowItems.clear();
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM "+MessageList+" m LEFT JOIN "+ContactList+" c ON" +
@@ -289,23 +292,21 @@ private getCustomImage CusImg=new getCustomImage();
         Cursor cursor= db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
+                boolean newmsg=false;
                 String number=cursor.getString(cursor.getColumnIndex(MNUMBER));
                 String date=cursor.getString(cursor.getColumnIndex(Date));
                 String STATUS=null,mtype;
                 mtype=cursor.getString(cursor.getColumnIndex(Messagetype));
-                if(cursor.getString(cursor.getColumnIndex(Seen))=="0")
-                {
-                    STATUS="New message";
+                if(cursor.getString(cursor.getColumnIndex(Seen))=="0") {
+                    newmsg=true;
                 }
-                else if (mtype.equals("text")){
+                 if (mtype.equals("text")){
                     STATUS=cursor.getString(cursor.getColumnIndex(Messagetext));
                 }
-                else if(mtype.equals("image"))
-                {
+                else if(mtype.equals("image")) {
                     STATUS="PHOTO";
                 }
-                else if(mtype.equals("pdf"))
-                {
+                else if(mtype.equals("pdf")) {
                     STATUS="File";
                 }
                 try{
@@ -319,13 +320,20 @@ private getCustomImage CusImg=new getCustomImage();
                 Bitmap bitmap;
                 name=cursor.getString(cursor.getColumnIndex(Contact_Name));
                 proimg=cursor.getString(cursor.getColumnIndex(Profile_image));
-                if(name==null && proimg==null)
-                {
+                if(name==null && proimg==null) {
                     name=number;
                     bitmap=CusImg.getProImg(context);
                 }
                 else bitmap=CusImg.getRoundedShape(proimg,100,100);
-                RowItem itm=new RowItem(name,bitmap,STATUS,date,number);
+                java.util.Date perseDate=null;
+                try{
+                    perseDate=simpleDateFormat.parse(date);
+                    date=simpleDate.format(perseDate);
+                }
+                catch (ParseException e){
+                    e.printStackTrace();
+                }
+                ChatListModel itm=new ChatListModel(name,bitmap,STATUS,newmsg,date,number);
                 rowItems.add(itm);
             } while (cursor.moveToNext());
         }

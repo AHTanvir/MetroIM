@@ -7,7 +7,7 @@ import java.sql.RowId;
  * Created by anwar on 12/5/2016.
  */
 
-public interface imanager {
+public interface Iappmanager {
     void FileUpload(final String path, final String phone, final String type, final int position,final String RowId);
     public boolean isNetworkConnected();
     public String UpdateContacts() throws Exception;
@@ -22,6 +22,7 @@ public interface imanager {
     public void fileDownload(final String url,final String phone,final String rowId,final int position);
     public String test();
     String getBackupEmail();
+    public void MessageReceived(String from,String sentdt,String mType,String message);
     public String send_Sms(String phone);
     public String resetPassword(String Phone) throws UnsupportedEncodingException;
 }

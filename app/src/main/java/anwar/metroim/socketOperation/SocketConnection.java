@@ -5,12 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 import org.apache.commons.codec.binary.Base64;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -35,7 +32,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.logging.Logger;
 
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 import anwar.metroim.MessageInfo;
@@ -47,8 +43,8 @@ import static anwar.metroim.service.MetroImservice.TAKE_MESSAGE;
  * Created by anwar on 12/3/2016.
  */
 
-public class socketConnection implements SocketInterface {
-    private static final String AUTHENTICATION_SERVER_ADDRESS = "http://192.168.43.95/metroim/index.php"; //TODO change to your WebAPI Address
+public class SocketConnection implements SocketInterface {
+    private static final String AUTHENTICATION_SERVER_ADDRESS = "http://192.168.0.100/metroim/index.php";
     private int listeningPort=0;
     private static final String HTTP_REQUEST_FAILED = "0";
     private Socket client=null;
@@ -58,12 +54,13 @@ public class socketConnection implements SocketInterface {
     private boolean listening;
     private Handler h=new Handler();
     private DatabaseHandler db;
+    Iappmanager iappmanager;
     private class ReceiveConnection extends Thread {
         Socket clientSocket = null;
         public ReceiveConnection(Socket socket)
         {
             this.clientSocket = socket;
-            socketConnection.this.sockets.put(socket.getInetAddress(), socket);
+            SocketConnection.this.sockets.put(socket.getInetAddress(), socket);
         }
 
         @Override
@@ -79,23 +76,24 @@ public class socketConnection implements SocketInterface {
                 {
                     if (inputLine.equals("exit") == false)
                     {
-                        final String i=inputLine;
-                        //appManager.messageReceived(inputLine);
-                        h.post(new Runnable() {
+                        String d[]=inputLine.split("&");
+                        SocketConnection.this.iappmanager.MessageReceived(URLDecoder.decode(d[0],"UTF-8"),
+                                URLDecoder.decode(d[1],"UTF-8"),URLDecoder.decode(d[2],"UTF-8"),URLDecoder.decode(d[3],"UTF-8"));
+                       /* h.post(new Runnable() {
                             @Override
                             public void run() {
                                 System.out.println("-handeler port="+listeningPort);
                                 //new MetroImservice().t();
                                 urlDecode(i);
                             }
-                        });
+                        });*/
                     }
                     else
                     {
                         clientSocket.shutdownInput();
                         clientSocket.shutdownOutput();
                         clientSocket.close();
-                        socketConnection.this.sockets.remove(clientSocket.getInetAddress());
+                        SocketConnection.this.sockets.remove(clientSocket.getInetAddress());
                     }
                 }
                 System.out.println("socketServer");
@@ -106,8 +104,8 @@ public class socketConnection implements SocketInterface {
         }
     }
 
-    public socketConnection(imanager ma_nager) {
-
+    public SocketConnection(Iappmanager ma_nager) {
+        this.iappmanager=ma_nager;
     }
 
 
@@ -143,7 +141,6 @@ public class socketConnection implements SocketInterface {
         catch (IOException e) {
             e.printStackTrace();
         }
-
         if (result.length() == 0) {
             result = HTTP_REQUEST_FAILED;
         }
@@ -153,7 +150,7 @@ public class socketConnection implements SocketInterface {
 
     public String sendHttpFileUploadRequest(String selectedPath) {
         boolean successful=false;
-        String UPLOAD_URL= "http://192.168.43.95/metroim/upload.php";
+        String UPLOAD_URL= "http://192.168.0.100/metroim/upload.php";
        int serverResponseCode=200;
             String fileName =selectedPath.replace(" ","_");
             HttpURLConnection conn = null;
@@ -169,7 +166,6 @@ public class socketConnection implements SocketInterface {
             if (!sourceFile.isFile()) {
                 return null;
             }
-
             try {
                 FileInputStream fileInputStream = new FileInputStream(sourceFile);
                 URL url = new URL(UPLOAD_URL);

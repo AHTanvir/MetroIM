@@ -11,6 +11,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import anwar.metroim.Model.RowItem;
 import anwar.metroim.R;
 
 /**

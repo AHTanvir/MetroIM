@@ -1,4 +1,4 @@
-package anwar.metroim.Adapter;
+package anwar.metroim.Model;
 
 import android.graphics.Bitmap;
 
