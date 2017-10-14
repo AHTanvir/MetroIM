@@ -23,9 +23,9 @@
        android:gravity="left">
        <ImageView
            android:id="@+id/iv_img"
-           android:layout_width="250dp"
-           android:layout_height="match_parent"
-           android:scaleType="centerInside"
+           android:layout_width="200dp"
+           android:layout_height="200dp"
+           android:scaleType="fitXY"
            android:adjustViewBounds="true"
            />
        <ProgressBar
@@ -42,20 +42,17 @@
            android:layout_width="20dp"
            android:layout_height="15dp"
            android:id="@+id/send_status"
-           android:layout_alignParentBottom="true"
+           android:layout_alignBottom="@+id/iv_img"
            android:layout_alignRight="@+id/iv_img"/>
+       <TextView
+           android:id="@+id/dateView"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignLeft="@+id/iv_img"
+           android:layout_alignBottom="@+id/iv_img"
+           android:layout_marginLeft="20dp"
+           android:text="leftDate"
+           android:textColor="#343434"
+           android:textSize="12sp" />
    </RelativeLayout>
-    <TextView
-        android:id="@+id/dateView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/iv_img"
-        android:layout_toEndOf="@+id/iv_img"
-        android:layout_toRightOf="@+id/iv_img"
-        android:layout_gravity="bottom|left"
-        android:layout_marginLeft="10dp"
-        android:text="leftDate"
-        android:textColor="#343434"
-        android:textSize="12sp" />
-
 </LinearLayout>

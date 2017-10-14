@@ -1,137 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:background="@color/colorPrimary"
     tools:context="anwar.metroim.RegisterActivity">
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
     <TextView
         android:id="@+id/editText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:layout_marginTop="5dp"
-        android:layout_gravity="center"
+        android:layout_gravity="center_horizontal"
         android:textAlignment="center"
         android:text="User Type" />
-
     <Spinner
         android:id="@+id/spinner_type"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_gravity="center"
         android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="5dp"
         android:spinnerMode="dropdown"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/cardview_dark_background"
         android:visibility="visible" />
-
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:hint="@string/name"
-        android:textColorHint="@color/white"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:id="@+id/tf_name"
-        android:maxLines="1" />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:ems="10"
-        android:id="@+id/tf_email"
-        android:hint="Email"
-        android:textColorHint="@color/white"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        tools:ignore="HardcodedText"
-        android:maxLines="1" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/tf_password"
-        android:hint="Password"
-        android:textColorHint="@color/white"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        tools:ignore="HardcodedText"
-        android:maxLines="1" />
-
-    <AutoCompleteTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tf_dept"
-        android:textColorHint="@color/white"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:hint="Dept"
-        android:singleLine="true"
-        android:imeOptions="actionNext" />
-
-    <AutoCompleteTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tf_batch"
-        android:textColorHint="@color/white"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:hint="Batch"
-        android:inputType="number"
-        android:singleLine="true"
-        android:imeOptions="actionNext"/>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/tf_id"
-        android:hint="ID"
-        android:textColorHint="@color/white"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        tools:ignore="HardcodedText"
-        android:autoText="false" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:ems="10"
-        android:id="@+id/tf_phone"
-        android:hint="Phone"
-        android:textColorHint="@color/white"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        tools:ignore="HardcodedText" />
-
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:hint="@string/name"
+                android:id="@+id/tf_name"
+                android:maxLines="1" />
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:ems="10"
+                android:id="@+id/tf_email"
+                android:hint="Email"
+                tools:ignore="HardcodedText"
+                android:maxLines="1" />
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:ems="10"
+                android:id="@+id/tf_password"
+                android:hint="Password"
+                tools:ignore="HardcodedText"
+                android:maxLines="1" />
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tf_dept"
+                android:hint="Dept"
+                android:singleLine="true"
+                android:imeOptions="actionNext" />
+            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tf_batch"
+                android:hint="Batch"
+                android:inputType="number"
+                android:singleLine="true"
+                android:imeOptions="actionNext"/>
+            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:ems="10"
+                android:id="@+id/tf_id"
+                android:hint="ID"
+                tools:ignore="HardcodedText"
+                android:autoText="false" />
+            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:ems="10"
+                android:id="@+id/tf_phone"
+                android:hint="Phone"
+                tools:ignore="HardcodedText" />
+            </android.support.design.widget.TextInputLayout>
     <Button
         android:text="REGISTER"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/btn_singup"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:onClick="register"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/button_style"
         tools:ignore="HardcodedText" />
-
-
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

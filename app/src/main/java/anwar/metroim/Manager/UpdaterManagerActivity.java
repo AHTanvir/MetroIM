@@ -91,7 +91,7 @@ public class UpdaterManagerActivity extends AppCompatActivity {
                     System.out.println("Result "+result);
                 }catch (Exception e) {
                     e.printStackTrace();
-                    System.out.println("R exception "+result1);
+                    System.out.println("update manager exception"+e);
                 }
                 if(result !=null )
                 {
@@ -100,7 +100,7 @@ public class UpdaterManagerActivity extends AppCompatActivity {
                         public void run() {
                             try {
                                 JSONArray array=new JSONArray(result);
-                                session.createinfoSession(array.getString(0),array.getString(1),array.getString(2));
+                                session.createinfoSession(array.getString(0),array.getString(1),array.getString(2),array.getString(3));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

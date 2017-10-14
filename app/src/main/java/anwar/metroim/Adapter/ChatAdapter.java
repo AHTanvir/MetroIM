@@ -67,8 +67,10 @@ public class ChatAdapter extends BaseAdapter{
                     ((TextView) convertView.findViewById(R.id.tv_text))
                             .setText(name+"\n"+"Click to open");
                 }
-                else ((TextView) convertView.findViewById(R.id.tv_text))
-                        .setText(item.getContent());
+                else {
+                    ((TextView) convertView.findViewById(R.id.tv_text))
+                            .setText(item.getContent());
+                }
                 ((TextView) convertView.findViewById(R.id.dateView))
                         .setText(item.getTime());
                 if(item.getDate() !=null)
@@ -203,11 +205,24 @@ public class ChatAdapter extends BaseAdapter{
         return convertView;
     }
     public void updateAdapter(List<ChatModel> updateList ) {
-        //and call notifyDataSetChanged
-        this.mChatList=updateList;
+        mChatList=updateList;
+        notifyDataSetChanged();
+    }
+    public void addMsg(ChatModel msg){
+        mChatList.add(msg);
+        notifyDataSetChanged();
+    }
+    public void updateMsg(int position,ChatModel msg){
+        mChatList.add(position,msg);
         notifyDataSetChanged();
     }
     public void dateCheker(){
 
+    }
+    public void addList(List<ChatModel> list){
+        if(list.size()!=0) {
+            mChatList.addAll(list);
+            notifyDataSetChanged();
+        }
     }
 }

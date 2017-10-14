@@ -177,6 +177,7 @@ private getCustomImage CusImg=new getCustomImage();
             name[1]=CusImg.base64Encode(BitmapFactory.decodeResource(context.getResources(),R.drawable.profile_image));
         }
         name[1]=name[1].replaceAll(" ","+");
+        cursor.close();
         return name;
     }
     public void updateContact(String number,String status,String image,String updatestatus) {
@@ -225,7 +226,66 @@ private getCustomImage CusImg=new getCustomImage();
         db.insert(MessageList,null,values);
         db.close();
     }
+    public String getMaxid(){
+        String selectQuery = "SELECT max(id) as id FROM "+MessageList+"";
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        cursor.moveToFirst();
+        String maxid = cursor.getString(cursor.getColumnIndex("id"));
 
+        return maxid;
+
+    }
+    public List getMessage(String id ,String userNumber){
+        chatModels.clear();
+        SQLiteDatabase db = this.getReadableDatabase();
+        //String selectQuery = "SELECT  * FROM "+MessageList+" WHERE mnumber='"+userNumber+"'";
+       String selectQuery = "SELECT  * FROM "+MessageList+" WHERE mnumber='"+userNumber+"' ORDER BY "+Id+" DESC LIMIT 10 OFFSET '"+id+"'";
+        Cursor cursor= db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                conId = cursor.getString(0);
+                String mType=cursor.getString(2);
+                if(cursor.getString(5).equals("to"))
+                {
+                    if(mType.equals("image"))
+                    {
+                        type=1;
+                        content=cursor.getString(3);
+                    }
+                    else{
+                        type =0;
+                        content =cursor.getString(3);
+                    }
+                }
+                else{
+                    if(mType.equals("image"))
+                    {
+                        type=3;
+                        if (cursor.getString(3).startsWith("http")){
+
+                        }
+                        content=cursor.getString(3);
+
+                    }
+                    else{
+                        type =2;
+                        if (cursor.getString(3).startsWith("http")){
+                        }
+                        content =cursor.getString(3);
+                    }
+                }
+                String []dateTime=praseDate(cursor.getString(4));
+                ChatModel item = new ChatModel(type,content,dateTime[1],dateTime[0],conId,cursor.getInt(cursor.getColumnIndex(Mstatus)));
+                // item.date=dateTime[0];
+                //item.time=dateTime[1];
+                chatModels.add(0,item);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        System.out.println("msg size "+chatModels.size() +"max id "+id);
+        return chatModels;
+    }
     public List getMessage(String userNumber){
         chatModels.clear();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -297,7 +357,7 @@ private getCustomImage CusImg=new getCustomImage();
                 String date=cursor.getString(cursor.getColumnIndex(Date));
                 String STATUS=null,mtype;
                 mtype=cursor.getString(cursor.getColumnIndex(Messagetype));
-                if(cursor.getString(cursor.getColumnIndex(Seen))=="0") {
+                if(cursor.getString(cursor.getColumnIndex(Seen)).equals("0")) {
                     newmsg=true;
                 }
                  if (mtype.equals("text")){
@@ -499,5 +559,9 @@ private getCustomImage CusImg=new getCustomImage();
             arr[0]=" ";
         }
             return arr;
+    }
+    public boolean isOpen(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.isOpen();
     }
 }

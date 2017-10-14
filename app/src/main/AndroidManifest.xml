@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="anwar.metroim">
-
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
@@ -68,7 +67,7 @@
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
         <activity android:name=".testActivity" />
         <activity android:name=".ChatScreen.ChatListActivity" />
-        <activity android:name=".BloodDonor.donorActivity" />
+        <activity android:name=".BloodDonor.DonorActivity" />
         <activity android:name=".Manager.UpdaterManagerActivity" />
         <activity android:name=".Manager.MultiplePermissions"></activity>
         <meta-data

@@ -52,13 +52,13 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listeners.onClick(v.getRootView(),position);
+                listeners.onClick(v,position);
             }
         });
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                listeners.onLongClick(v.getRootView(),position);
+                listeners.onLongClick(v,position);
                 return true;
             }
         });

@@ -347,7 +347,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener{
                                     man_ger.exit();
                                 }
                                 else if(act.equals("&updateName=")) {
-                                    session.createinfoSession(value,user.get(SessionManager.KEY_STATUS),user.get(SessionManager.KEY_PHOTO));
+                                    session.createinfoSession(value,user.get(SessionManager.KEY_STATUS),user.get(SessionManager.KEY_PHOTO),"not");
                                     newName.setVisibility(View.GONE);
                                     ((MainActivity)getActivity()). NavView();
                                 }

@@ -4,61 +4,46 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="15dp">
-
-    <LinearLayout
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Register"/>
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".3"
-            android:text="Name:" />
-
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
         <EditText
             android:id="@+id/reg_donor_name"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight=".7"
+            android:textColor="@color/cardview_dark_background"
+            android:hint="Name"
             android:imeOptions="actionDone"
             android:singleLine="true" />
-    </LinearLayout>
-
-    <LinearLayout
+        </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".3"
-            android:text="Phone:" />
-
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
         <EditText
             android:id="@+id/reg_donor_phone"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight=".7"
+            android:textColor="@color/cardview_dark_background"
             android:imeOptions="actionDone"
+            android:hint="Contact Number"
             android:inputType="number"
             android:singleLine="true" />
-    </LinearLayout>
-    <LinearLayout
+        </android.support.design.widget.TextInputLayout>
+    <Spinner
+        android:id="@+id/dialog_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingTop="15dp"
-        android:orientation="horizontal">
-
-        <Spinner
-            android:id="@+id/dialog_spinner"
-            android:layout_width="170dp"
-            android:layout_height="wrap_content"
-            android:popupBackground="#579073" />
-    </LinearLayout>
-
+        android:layout_height="40dp"
+        android:background="@drawable/button_style"
+        android:popupBackground="@drawable/button_style"
+        android:spinnerMode="dropdown"
+        android:layout_marginTop="10dp" />
 </LinearLayout>

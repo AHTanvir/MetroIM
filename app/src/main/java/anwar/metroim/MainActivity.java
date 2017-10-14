@@ -6,12 +6,10 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,10 +17,10 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.util.Log;
@@ -38,7 +36,6 @@ import android.view.MotionEvent;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,7 +55,7 @@ import java.util.HashMap;
 
 import anwar.metroim.Backup.Backup_email;
 import anwar.metroim.Backup.DbBackup;
-import anwar.metroim.BloodDonor.donorActivity;
+import anwar.metroim.BloodDonor.DonorActivity;
 import anwar.metroim.CustomImage.getCustomImage;
 import anwar.metroim.Adapter.arrayList;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
@@ -69,7 +66,6 @@ import anwar.metroim.service.MetroImservice;
 
 import static anwar.metroim.ChatScreen.ChatListActivity.currentDateHolder;
 import static anwar.metroim.R.id.Relative_layoutfor_fragments;
-import static anwar.metroim.R.id.center_horizontal;
 import static anwar.metroim.service.MetroImservice.LIST_UPDATED;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TabLayout.OnTabSelectedListener {
@@ -90,10 +86,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView navigationView;
     private  View navview;
     private String st,nam,ph;
-    private AlertDialog.Builder updateStatusDialog;
     private Calendar ca = Calendar.getInstance();
     private getCustomImage getCustomImage;
     private DbBackup dbBackup;
+    private HashMap<String, String> userInfo;
    private ServiceConnection mConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -150,10 +146,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         tabLayout = (TabLayout) findViewById(R.id.tab_view);
         tabLayout.addOnTabSelectedListener(this);
-
         if(selectedtab !=0)
             onTabSelected(tabLayout.getTabAt(0));
     }
@@ -167,13 +161,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         profile_image = (ImageView) navview.findViewById(R.id.profile_imageView);
         getCustomImage = new getCustomImage();
         session = new SessionManager(getApplicationContext());
-        HashMap<String, String> user = session.getUserDetails();
-        st=user.get(SessionManager.KEY_STATUS);
-        ph=user.get(SessionManager.KEY_PHOTO);
-        nam=user.get(SessionManager.KEY_NAME);
+        userInfo= session.getUserDetails();
+        st=userInfo.get(SessionManager.KEY_STATUS);
+        ph=userInfo.get(SessionManager.KEY_PHOTO);
+        nam=userInfo.get(SessionManager.KEY_NAME);
         Profile_name.setText(nam);
-        Profile_phone.setText(user.get(SessionManager.KEY_PHONE));
-        if(ph !=null)
+        Profile_phone.setText(userInfo.get(SessionManager.KEY_PHONE));
+        if(ph !=null && ph.length()>120)
            images=getCustomImage.getRoundedShape(ph,100,100);
         if (images == null)
             profile_image.setImageResource(R.drawable.my);
@@ -188,6 +182,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return false;
             }
         });
+        if (userInfo.get(SessionManager.KEY_TYPE).toLowerCase().equals("teacher"))
+            navigationView.getMenu().findItem(R.id.nav_donation_result).setVisible(false);
+        else navigationView.getMenu().findItem(R.id.nav_send_notice).setVisible(false);
     }
 
     public class MessageReceiver extends BroadcastReceiver {
@@ -212,9 +209,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void run() {
                 if (position == 0 ) {
                     view_Frag = "Chat_list";
-                    ChatListFragment chatListFragment = new ChatListFragment();
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(Relative_layoutfor_fragments, chatListFragment, chatListFragment.getTag()).commit();
+                    FragmentManager fm = getSupportFragmentManager();
+                    ChatListFragment chatListFragment =(ChatListFragment)fm.findFragmentByTag(Constant.TAG_CONTACTLIST_FRAGMENT);
+                    if(chatListFragment==null){
+                        chatListFragment=new ChatListFragment();
+                        fm.beginTransaction().replace(Relative_layoutfor_fragments, chatListFragment, Constant.TAG_CONTACTLIST_FRAGMENT).commit();
+                    }
+                   // FragmentManager fragmentManager = getSupportFragmentManager();
+                    //fragmentManager.beginTransaction().replace(Relative_layoutfor_fragments, chatListFragment,Constant.TAG_CONTACTLIST_FRAGMENT).commit();
                 }
                 if (position == 1) {
                     view_Frag ="Contact_list";
@@ -282,8 +284,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.msg_Backup) {
+        if (id==R.id.view_profile){
+            viewFriendInfo("&getFriendInfo=",userInfo.get(SessionManager.KEY_PHONE),userInfo.get(SessionManager.KEY_NAME),this);
+        }
+        else if (id == R.id.msg_Backup) {
                    dbBackup=new DbBackup(MainActivity.this, man_ger.getBackupEmail(), new GoogleApiClient.ConnectionCallbacks() {
                        @Override
                        public void onConnected(@Nullable Bundle bundle) {
@@ -301,13 +305,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                    });
         } else if (id == R.id.nav_donation_result) {
             view_Frag = "nn";
-            tabLayout.setVisibility(View.GONE);
+            //tabLayout.setVisibility(View.GONE);
            // getSupportActionBar().hide();
             ResultFragment resultFrag = new ResultFragment();
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(Relative_layoutfor_fragments, resultFrag, resultFrag.getTag()).addToBackStack(null).commit();
+            fragmentManager.beginTransaction().replace(Relative_layoutfor_fragments, resultFrag, resultFrag.getTag())
+                    .addToBackStack(null).commit();
         } else if (id == R.id.nav_blood_donor) {
-            Intent intent = new Intent(this, donorActivity.class);
+            Intent intent = new Intent(this, DonorActivity.class);
             finish();
             startActivity(intent);
         }
@@ -317,7 +322,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportActionBar().hide();
             SettingFragment settingfrag = new SettingFragment();
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(Relative_layoutfor_fragments, settingfrag, settingfrag.getTag())
+            fragmentManager.beginTransaction().replace(Relative_layoutfor_fragments, settingfrag, Constant.TAG_NOTICE_FRAGMENT)
+                    .addToBackStack(null).commit();
+        }
+        else if(id==R.id.nav_send_notice){
+            view_Frag = "nn";
+            tabLayout.setVisibility(View.GONE);
+            getSupportActionBar().hide();
+            NoticeFragment noticeFragment = new NoticeFragment();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(Relative_layoutfor_fragments, noticeFragment,Constant.TAG_NOTICE_FRAGMENT)
                     .addToBackStack(null).commit();
         }
         else if (id == R.id.nav_logout) {
@@ -368,7 +382,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 backup.addschedule(ca.getTime());
                 Toast.makeText(MainActivity.this,result.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)+"added as your backup account", Toast.LENGTH_LONG).show();
                 //onNavigationItemSelected(itm);
-            }
+            }else {
+                    Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constant.TAG_NOTICE_FRAGMENT);
+                    fragment.onActivityResult(requestCode, resultCode, result);
+                }
+
         }
     }
 
@@ -413,7 +431,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         @Override
                         public void run() {
                             if (result.equals("1")) {
-                                session.createinfoSession(nam,st,image_str);
+                                session.createinfoSession(nam,st,image_str,"no");
                                 if (bitmap != null) {
                                     profile_image.setImageBitmap(bitmap);
                                 }
@@ -429,12 +447,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void showUpdateStatusDialog() {
         String[] status = {"Availble", "Busy", "Other"};
-        updateStatusDialog = new AlertDialog.Builder(MainActivity.this,R.style.MyAlertDialogTheme);
+       AlertDialog.Builder updateStatusDialog = new AlertDialog.Builder(MainActivity.this,R.style.MyAlertDialogTheme);
         LayoutInflater li = LayoutInflater.from(this);
         final View promptsView = li.inflate(R.layout.update_status, null);
         final AutoCompleteTextView auto_text=(AutoCompleteTextView)promptsView.findViewById(R.id.auto_text);
         final Button update_btn =(Button)promptsView.findViewById(R.id.btn_update);
-         ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_dropdown_item_1line, status);
+         ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, R.layout.custom_spinner_item, status);
         auto_text.setInputType(InputType.TYPE_CLASS_TEXT);
         auto_text.setText(st);
         auto_text.setOnTouchListener(new View.OnTouchListener() {
@@ -465,8 +483,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 @Override
                                 public void run() {
                                     if (result.equals("1")) {
-                                        session.createinfoSession(nam,st,ph);
+                                        session.createinfoSession(nam,st,ph,"no");
                                         Toast.makeText(MainActivity.this,"SUCCESSFUL",Toast.LENGTH_SHORT).show();
+                                        alertDialog.dismiss();
                                     }else Toast.makeText(MainActivity.this,"FAILED",Toast.LENGTH_SHORT).show();
                                 }
                             });
@@ -475,7 +494,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }).start();
             }
         });
-        updateStatusDialog.show();
+        alertDialog=updateStatusDialog.create();
+        alertDialog.show();
     }
     void di(){
         LayoutInflater li = LayoutInflater.from(this);
@@ -538,6 +558,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(!view_Frag.equals("Contact_list"))
             arrayList.getmInstance().setContactlist(databaseHandler.getContact(0));
     }
-
-
+    public String sendNotice(String dept,String id,String msg,String mType){
+        return man_ger.sendNoticeToStudent(dept,id,msg,mType,nam);
+    }
 }

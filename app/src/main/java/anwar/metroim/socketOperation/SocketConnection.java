@@ -44,7 +44,7 @@ import static anwar.metroim.service.MetroImservice.TAKE_MESSAGE;
  */
 
 public class SocketConnection implements SocketInterface {
-    private static final String AUTHENTICATION_SERVER_ADDRESS = "http://192.168.0.100/metroim/index.php";
+    private static final String AUTHENTICATION_SERVER_ADDRESS = "http://192.168.43.95/metroim/index.php";
     private int listeningPort=0;
     private static final String HTTP_REQUEST_FAILED = "0";
     private Socket client=null;
@@ -57,8 +57,7 @@ public class SocketConnection implements SocketInterface {
     Iappmanager iappmanager;
     private class ReceiveConnection extends Thread {
         Socket clientSocket = null;
-        public ReceiveConnection(Socket socket)
-        {
+        public ReceiveConnection(Socket socket) {
             this.clientSocket = socket;
             SocketConnection.this.sockets.put(socket.getInetAddress(), socket);
         }
@@ -150,7 +149,7 @@ public class SocketConnection implements SocketInterface {
 
     public String sendHttpFileUploadRequest(String selectedPath) {
         boolean successful=false;
-        String UPLOAD_URL= "http://192.168.0.100/metroim/upload.php";
+        String UPLOAD_URL= "http://192.168.43.95/metroim/upload.php";
        int serverResponseCode=200;
             String fileName =selectedPath.replace(" ","_");
             HttpURLConnection conn = null;

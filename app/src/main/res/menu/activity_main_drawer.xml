@@ -1,22 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-
+        <item
+            android:id="@+id/view_profile"
+            android:icon="@drawable/ic_person_black_24dp"
+            android:title="Profile" />
         <item
             android:id="@+id/msg_Backup"
+            android:icon="@drawable/ic_cloud_upload_black_24dp"
             android:title="Backup" />
         <item
+            android:id="@+id/nav_send_notice"
+            android:icon="@drawable/ic_notifications_black_24dp"
+            android:title="Notice" />
+        <item
             android:id="@+id/nav_donation_result"
+            android:icon="@drawable/ic_event_note_black_24dp"
             android:title="Result" />
         <item
             android:id="@+id/nav_blood_donor"
+            android:icon="@drawable/ic_search_black_24dp"
             android:title="Blood Donor" />
         <item
             android:id="@+id/nav_setting"
-            android:title="Account Setting" />
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="Setting" />
         <item
             android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_power_settings_new_black_24dp"
             android:title="LogOut" />
-
-
 </menu>

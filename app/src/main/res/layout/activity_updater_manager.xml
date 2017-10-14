@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:text="MetroIM"
         android:textSize="40dp"
-        android:textColor="@color/white"
+        android:textColor="@color/forestgreen"
         tools:ignore="HardcodedText,SpUsage"
         android:layout_marginTop="206dp"
         android:id="@+id/textView"
@@ -28,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Your Contacts is updating"
+        android:textColor="@color/forestgreen"
         android:layout_marginTop="90dp"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true" />

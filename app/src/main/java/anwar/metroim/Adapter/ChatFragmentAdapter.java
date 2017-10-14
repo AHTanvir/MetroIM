@@ -59,13 +59,13 @@ public class ChatFragmentAdapter extends RecyclerView.Adapter<ChatFragmentAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listeners.onClick(v.getRootView(),position);
+                listeners.onClick(v,position);
             }
         });
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                listeners.onLongClick(v.getRootView(),position);
+                listeners.onLongClick(v,position);
                 //listeners.onClick(v.getRootView().findViewById(R.id.recycler_view),position);
                 return true;
             }
@@ -118,7 +118,7 @@ public class ChatFragmentAdapter extends RecyclerView.Adapter<ChatFragmentAdapte
                     if ((filterList.get(i).getName().toUpperCase())
                             .startsWith(constraint.toString().toUpperCase())) {
                         ChatListModel contacts = new ChatListModel(filterList.get(i).getName(), filterList.get(i).getImage(),
-                                filterList.get(i).isNewmsg(), filterList.get(i).getMsg(), filterList.get(i).getDate(), filterList.get(i).getNumber());
+                               filterList.get(i).getMsg(), filterList.get(i).isNewmsg(), filterList.get(i).getDate(), filterList.get(i).getNumber());
                         filterList2.add(contacts);
                     }
                 }

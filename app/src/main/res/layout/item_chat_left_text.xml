@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="5dp" >
+    android:padding="5dp"
+    android:orientation="vertical">
     <TextView
         android:id="@+id/tv_date"
         android:layout_width="wrap_content"
@@ -17,14 +17,19 @@
         android:text="leftDate"
         android:textColor="#343434"
         android:textSize="12sp" />
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="left">
+
         <TextView
             android:id="@+id/tv_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Hi"
+            android:minWidth="100dp"
             android:background="@drawable/chat_item_left_normal"
             android:textColor="#009999"
             android:textSize="16sp" />
@@ -32,32 +37,30 @@
             android:id="@+id/simpleProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_centerInParent="true"
+            android:background="@drawable/custom_progressbar"
             android:indeterminate="false"
             android:max="60"
             android:progress="0"
-            android:background="@drawable/custom_progressbar" />
+            android:visibility="gone" />
+
         <ImageView
+            android:id="@+id/send_status"
             android:layout_width="17dp"
             android:layout_height="10dp"
-            android:id="@+id/send_status"
-            android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/tv_text"
-            />
+            android:padding="2dp"
+            android:textColor="#009999"
+            android:layout_alignBottom="@+id/tv_text"
+            android:layout_alignRight="@+id/tv_text" />
+        <TextView
+            android:id="@+id/dateView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_text"
+            android:layout_alignLeft="@+id/tv_text"
+            android:layout_marginLeft="20dp"
+            android:text="leftDate"
+            android:textColor="#009999"
+            android:textSize="11sp" />
     </RelativeLayout>
-    <TextView
-        android:id="@+id/dateView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/tv_text"
-        android:layout_toEndOf="@+id/tv_text"
-        android:layout_toRightOf="@+id/tv_text"
-        android:layout_gravity="bottom|left"
-        android:layout_marginLeft="10dp"
-        android:text="leftDate"
-        android:textColor="#343434"
-        android:textSize="12sp" />
-
-
 </LinearLayout>

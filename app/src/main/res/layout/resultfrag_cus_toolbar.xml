@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="?attr/colorPrimary"
+    android:background="#cc228522"
     app:popupTheme="@style/AppTheme"
     app:layout_scrollFlags="scroll|enterAlways"
     android:id="@+id/result_toolbar">
@@ -11,9 +11,7 @@
         android:id="@+id/row_2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:fitsSystemWindows="false">
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -21,7 +19,6 @@
             android:gravity="center|left"
             android:text="Subject"
             />
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -31,7 +28,6 @@
             android:gravity="center"
             android:text="Credit"
            />
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"

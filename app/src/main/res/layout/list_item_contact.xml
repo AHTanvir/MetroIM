@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    card_view:cardBackgroundColor="#638f58"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    app:cardCornerRadius="3dp"
-    android:layout_margin="0dp">
+    android:background="@color/colorPrimary"
+    android:layout_height="wrap_content">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,27 +23,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:textColor="@color/cardview_dark_background"
+            android:textStyle="italic"
             android:layout_toRightOf="@+id/profile_picture"
             android:paddingBottom="10dp"
-            android:text="txt"
-            android:textSize="20sp" />
+            android:text="Name"
+            android:textSize="16sp" />
         <TextView
             android:id="@+id/status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/contact_name"
+            android:textStyle="italic"
+            android:textColor="@color/cardview_dark_background"
             android:layout_below="@id/contact_name"
             android:maxLines="3"
-            android:text="txt"
-            android:textSize="16sp"/>
+            android:text="Status"
+            android:textSize="14sp"/>
         <TextView
             android:id="@+id/contact_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/cardview_dark_background"
+            android:textStyle="italic"
             android:layout_alignBaseline="@+id/contact_name"
             android:layout_alignBottom="@id/contact_name"
             android:layout_alignParentRight="true"
-            android:text="txt"
-            android:textSize="16sp"/>
+            android:text="contact_type"
+            android:textSize="14sp"/>
     </RelativeLayout>
-</android.support.v7.widget.CardView>
+</RelativeLayout>

@@ -1,5 +1,6 @@
 package anwar.metroim;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.util.PatternsCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,11 +27,14 @@ import android.widget.Toast;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import anwar.metroim.PhoneContactSynchronization.IphoneContacts;
 import anwar.metroim.PhoneContactSynchronization.PhoneContacts;
 import anwar.metroim.service.*;
 
+import static anwar.metroim.Constant.ID_PATTERN;
+import static anwar.metroim.Constant.PHONE_PATTERN;
 
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener,
@@ -39,8 +44,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private View alertLayout;
     private AlertDialog dialog;
     private  Spinner spinner_type;
-    private String vCode;
+    private String vCode="1216";
+    private String batch=null;
     private ArrayAdapter adapter;
+    private String dept=null;
     private AutoCompleteTextView tf_batch;
     private AutoCompleteTextView tf_dept;
     private Button btn_singup,resend,ok;
@@ -90,8 +97,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         tf_dept.addTextChangedListener(this);
         addItemOnSpinner();
         spinner_type.setOnItemSelectedListener(this);
+        tf_name.setOnFocusChangeListener(this);
+        tf_email.setOnFocusChangeListener(this);
+        tf_batch.setOnFocusChangeListener(this);
+        tf_password.setOnFocusChangeListener(this);
         tf_phone.setOnFocusChangeListener(this);
-        adapter=new ArrayAdapter<>(this,R.layout.list_item, deptList);
+        tf_id.setOnFocusChangeListener(this);
+        adapter=new ArrayAdapter<>(this,R.layout.custom_spinner_item, deptList);
         tf_dept.setOnFocusChangeListener(this);
     }
 
@@ -101,14 +113,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         list.add("Student");
         list.add("Teacher");
         ArrayAdapter adapter=new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,list);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.custom_spinner_item);
         spinner_type.setAdapter(adapter);
     }
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         if(spinner_type.getSelectedItem().equals("Teacher")) {
            // tf_dept.setVisibility(View.GONE);
             tf_batch.setVisibility(View.GONE);
-            tf_batch.setText("Teacher");
         }
         else {
            // tf_dept.setVisibility(view.VISIBLE);
@@ -122,38 +133,43 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void onClick(View view){
-       switch (view.getId())
-       {
+       switch (view.getId()) {
            case R.id.btn_singup:
-               if(tf_phone.length()>=0 && tf_id.length()>=0 && tf_password.length()>=0 ) {
+               if(isValid()) {
                     ShowDialog();
-                }
-               else {
-                   Toast.makeText(getApplicationContext(), "Phone or Id ", Toast.LENGTH_SHORT).show();
+                } else {
+                   Toast.makeText(getApplicationContext(), "Phone or Id Invalid", Toast.LENGTH_SHORT).show();
                }
                break;
            case R.id.verificatonbtn:
-               if(veri_code.getText().toString().equals(vCode))
-               {
+               if(veri_code.getText().toString().equals(vCode)){
                    dialog.dismiss();
-                   if(tf_batch.getText().toString().equals("Teacher")) {
-                       tf_batch.setText(tf_dept.getText().toString());
-                       tf_dept.setText("Teacher");
+                   if(spinner_type.getSelectedItem().equals("Teacher")) {
+                       batch=tf_dept.getText().toString();
+                       dept="Teacher";
+                   }else {
+                       batch=tf_batch.getText().toString();
+                       dept=tf_dept.getText().toString();;
                    }
+                   final ProgressDialog progressDialog= new ProgressDialog(this,R.style.MyAlertDialogThemeDatePicker);
+                   progressDialog.setIndeterminate(false);
+                   progressDialog.setMessage("Processing...");
+                   progressDialog.show();
                    Thread thread=new Thread(){
                        String result=new String();
                        @Override
                        public void run(){
                            try {
+                               String id=(tf_id.getText().toString()).replace("-","");
                                result=man_ger.signUpUser(tf_name.getText().toString(),tf_email.getText().toString(),
-                                       tf_password.getText().toString(),tf_dept.getText().toString(), tf_batch.getText().
-                                               toString(),tf_id.getText().toString(),tf_phone.getText().
+                                       tf_password.getText().toString(),dept.toLowerCase(),batch,id,tf_phone.getText().
                                                toString());
                            } catch (UnsupportedEncodingException e) {
                                e.printStackTrace();
                            }
                                handler.post(new Runnable(){
                                    public void run() {
+                                       progressDialog.dismiss();
                                        if(result .equals("1")) {
                                            Toast.makeText(RegisterActivity.this,"SUCCESFULL", Toast.LENGTH_LONG).show();
                                            Intent i=new Intent(RegisterActivity.this,LoginActivity.class);
@@ -164,6 +180,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                            Toast.makeText(RegisterActivity.this,"Phone number already used", Toast.LENGTH_LONG).show();
                                        }
                                        else  Toast.makeText(RegisterActivity.this,"FAILED", Toast.LENGTH_LONG).show();
+                                       System.out.println("reg res "+result);
                                    }
 
                                });
@@ -209,21 +226,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private void ShowDialog(){
         LayoutInflater inflater= this.getLayoutInflater();
         alertLayout = inflater.inflate(R.layout.sms_veri, null);
-       veri_code = (EditText) alertLayout.findViewById(R.id.veri_code);
+        veri_code = (EditText) alertLayout.findViewById(R.id.veri_code);
+        veri_code.setText("1216");
         ok= (Button) alertLayout.findViewById(R.id.verificatonbtn);
         resend= (Button) alertLayout.findViewById(R.id.resendbtn);
         ok.setOnClickListener(this);
         resend.setOnClickListener(this);
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Verification");
+        AlertDialog.Builder alert = new AlertDialog.Builder(this,R.style.MyAlertDialogTheme);
         alert.setView(alertLayout);
-        alert.setCancelable(false);
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+        alert.setCancelable(true);
         dialog = alert.create();
         dialog.show();
     }
@@ -248,12 +259,74 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void onFocusChange(View v, boolean hasFocus) {
         switch (v.getId()){
             case R.id.tf_dept:
-                tf_dept.setAdapter(adapter);
-                tf_dept.showDropDown();
+                if(hasFocus) {
+                    tf_dept.setAdapter(adapter);
+                    tf_dept.showDropDown();
+                }
+                else if(tf_dept.getText().length()<2)
+                    tf_dept.setError("Select Department");
                 break;
             case R.id.tf_phone:
-                tf_phone.setText(iphoneContacts.getPrefixCountyCode(context));
+                if (hasFocus)
+                    tf_phone.setText(iphoneContacts.getPrefixCountyCode(context));
+                else if (!hasFocus){
+                    if(!tf_phone.getText().toString().matches(PHONE_PATTERN))
+                        tf_phone.setError("Invalid Phone Number");
+
+                }
+                break;
+            case R.id.tf_name:
+                if(!hasFocus && tf_name.length()<5)
+                    tf_name.setError("Too short");
+                break;
+            case R.id.tf_email:
+                if(!hasFocus && !tf_email.getText().toString().matches(PatternsCompat.EMAIL_ADDRESS.pattern()))
+                    tf_email.setError("Invalid email");
+                break;
+            case R.id.tf_password:
+                if(!hasFocus && tf_password.length()<5)
+                    tf_password.setError("Passsword length must be grather then 4");
+                break;
+            case R.id.tf_id:
+                if(!hasFocus && !tf_id.getText().toString().matches(ID_PATTERN))
+                    tf_id.setError("Invalid id! e,g:123-123-0");
+                break;
+            case R.id.tf_batch:
+                if(!hasFocus && !tf_batch.getText().toString().matches("\\d{1,3}"))
+                    tf_batch.setError("Invalid! Only digits");
                 break;
         }
+    }
+    public boolean isValid(){
+        boolean isOk=true;
+        if(!tf_phone.getText().toString().matches(PHONE_PATTERN)) {
+            isOk=false;
+            tf_phone.setError("Invalid Phone Number");
+        }
+        if(tf_name.length()<5){
+            isOk=false;
+            tf_name.setError("Too short");
+        }
+        if(!tf_email.getText().toString().matches(PatternsCompat.EMAIL_ADDRESS.pattern())) {
+            isOk=false;
+            tf_email.setError("Invalid email");
+        }
+        if(tf_password.length()<4) {
+            isOk=false;
+            tf_password.setError("Passsword length must be grather then 4");
+        }
+        if(!tf_id.getText().toString().matches(ID_PATTERN)){
+            isOk=false;
+            tf_id.setError("Invalid id! e,g:123-123-1");
+        }
+        if(tf_batch.isShown() &&!tf_batch.getText().toString().matches("\\d{1,3}")) {
+            isOk=false;
+            tf_batch.setError("Invalid! Only digits");
+        }
+        if (tf_dept.getText().length()<2){
+            isOk=false;
+            tf_dept.setError("Select Department");
+        }
+        return isOk;
     }
 }

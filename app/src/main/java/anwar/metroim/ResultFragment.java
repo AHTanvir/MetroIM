@@ -6,8 +6,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +18,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -33,6 +36,8 @@ import anwar.metroim.Adapter.ResultRecyclerAdapter;
 import anwar.metroim.Model.RowItem;
 import anwar.metroim.LocalHandeler.DatabaseHandler;
 
+import static anwar.metroim.Constant.FLOAT_PATTERN;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,10 +48,11 @@ import anwar.metroim.LocalHandeler.DatabaseHandler;
  * create an instance of this fragment.
  */
 public class ResultFragment extends Fragment implements View.OnClickListener{
-    private FloatingActionButton fabmenu,fabcgpa,fabadd,fabback;
+    private FloatingActionButton fabadd,fabback;
     private EditText addSub,addGpa,addCredit;
     private Button InsertResult,cancel;
     private View alertLayout;
+    private boolean isOk=true;
     private AlertDialog dialog;
     private boolean isFABOpen=false;
     private ListPopupWindow popupWindow;
@@ -134,6 +140,10 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
         recycleradapter = new ResultRecyclerAdapter(rowitem);
         resultRecycleView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getActivity());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(resultRecycleView.getContext(),
+                DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getActivity().getBaseContext(), R.drawable.recycle_item_divider));
+        resultRecycleView.addItemDecoration(dividerItemDecoration);
         resultRecycleView.setLayoutManager(layoutManager);
         resultRecycleView.setAdapter(recycleradapter);
         resultRecycleView.setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -141,15 +151,11 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 int dy=(int)resultRecycleView.getY();
                 if (dy > 0) {
-                    fabmenu.hide();
-                    fabcgpa.hide();
                     fabadd.hide();
                     fabback.show();
                     ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
                 }
                 else if (dy <= 0) {
-                    fabmenu.show();
-                    fabcgpa.show();
                     fabadd.show();
                     fabback.hide();
                     ((AppCompatActivity) getActivity()).getSupportActionBar().show();
@@ -164,7 +170,10 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
         super.onCreateOptionsMenu(menu, inflater);
         getActivity().getMenuInflater().inflate(R.menu.main, menu);
         //View v = (View) menu.findItem(R.id.action_search).getActionView();
+        MenuItem refresh=(MenuItem) menu.findItem(R.id.action_refresh).setVisible(false);
+        menu.findItem(R.id.action_update_status).setVisible(false);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setQueryHint("Subject Name");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
@@ -187,18 +196,17 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
         popupWindow = new ListPopupWindow(getActivity());
         ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.list_item,arr);
         popupWindow.setAnchorView(v.findViewById(R.id.credit));
-        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.color.white));
+        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.dialog_background));
+        //popupWindow.setBackgroundDrawable(getResources().getDrawable(R.color.color_popuu));
         popupWindow.setAdapter(arrayAdapter);
         popupWindow.setWidth(150);
         popupWindow.setHeight(150);
-        // note: don't use pixels, use a dimen resource// the callback for when a list item is selected
         popupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 popupWindow.dismiss();
                String subject=rowitem.get(pos).getSubject();
-                if(arr[position].equals("Delete"))
-                {
+                if(arr[position].equals("Delete")) {
                     databaseHandler.deleteResult(subject);
                     recyclerView();
                 }
@@ -215,12 +223,8 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
     }
 
     private void fabButton(View view) {
-        fabmenu = (FloatingActionButton) view.findViewById(R.id.fabmenu);
-        fabcgpa = (FloatingActionButton) view.findViewById(R.id.fabcgpa);
         fabadd = (FloatingActionButton) view.findViewById(R.id.fabadd);
         fabback= (FloatingActionButton) view.findViewById(R.id.fab_back);
-        fabmenu.setOnClickListener(this);
-        fabcgpa.setOnClickListener(this);
         fabadd.setOnClickListener(this);
         fabback.setOnClickListener(this);
     }
@@ -247,37 +251,25 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
       switch(v.getId()){
-          case R.id.fabmenu:
-              if(!isFABOpen){
-                  showFABMenu();
-              }else{
-                  closeFABMenu();
-              }
-                break;
-          case R.id.fabcgpa:
-              break;
           case R.id.fabadd:
               ShowAddResultDialog("Insert Result","Insert");
               break;
           case R.id.add_result_OkButton:
               if(InsertResult.getText().equals("Insert")) {
-                  if(addSub.length()>2 &&addGpa.length()>0 &&addGpa.length()>0) {
+                  if(inserValidity()) {
                      dialog.dismiss();
                       databaseHandler.addResult(addSub.getText().toString(),addCredit.getText().toString(),addGpa.getText().toString());
                   }
                   else Toast.makeText(getActivity(),"Fill all field",Toast.LENGTH_SHORT).show();
               }
               else{
-                  if(addSub.length()>2 &&addGpa.length()>0 &&addGpa.length()>0){
+                  if(inserValidity()){
                       databaseHandler.updateResult(addSub.getText().toString(),addCredit.getText().toString(),addGpa.getText().toString());
                       dialog.dismiss();
                   }
                   else Toast.makeText(getActivity(),"Fill all field",Toast.LENGTH_SHORT).show();
               }
               recyclerView();
-              break;
-          case R.id.add_result_calcelButton:
-              dialog.dismiss();
               break;
           case R.id.fab_back:
               ((MainActivity)getActivity()).onBackPressed();
@@ -294,26 +286,35 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
         addCredit=(EditText) alertLayout.findViewById(R.id.add_resultCredit);
         addGpa=(EditText) alertLayout.findViewById(R.id.add_resultGpa);
         InsertResult=(Button) alertLayout.findViewById(R.id.add_result_OkButton);
-        cancel=(Button)alertLayout.findViewById(R.id.add_result_calcelButton);
+        //cancel=(Button)alertLayout.findViewById(R.id.add_result_calcelButton);
         InsertResult.setText(buttonAction);
-        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-        TextView ct = new TextView(getActivity());
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity(),R.style.MyAlertDialogTheme);
+        TextView ct =(TextView)alertLayout.findViewById(R.id.dilog_titel);
         ct.setText(titel);
-        ct.setBackgroundColor(Color.DKGRAY);
-        ct.setPadding(10, 10, 10, 10);
-        ct.setGravity(Gravity.CENTER);
-        ct.setTextColor(Color.WHITE);
-        ct.setTextSize(20);
-        alert.setCustomTitle(ct);
         alert.setView(alertLayout);
         alert.setCancelable(true);
         InsertResult.setOnClickListener(this);
-        cancel.setOnClickListener(this);
+       //cancel.setOnClickListener(this);
         dialog=alert.create();
         dialog.show();
     }
 
-
+    private boolean inserValidity(){
+        isOk=true;
+        if(addSub.length()<5) {
+            isOk=false;
+            addSub.setError("Too Short");
+        }
+        if(!addCredit.getText().toString().matches(FLOAT_PATTERN)){
+            isOk=false;
+            addCredit.setError("Invalid format e,g 2.0");
+        }
+        if(!addGpa.getText().toString().matches(FLOAT_PATTERN)){
+            isOk=false;
+            addGpa.setError("Invalid format e,g 2.0");
+        }
+        return isOk;
+    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -328,17 +329,6 @@ public class ResultFragment extends Fragment implements View.OnClickListener{
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-    private void showFABMenu(){
-        isFABOpen=true;
-        fabcgpa.animate().translationY(-getResources().getDimension(R.dimen.standard_130));
-        fabadd.animate().translationY(-getResources().getDimension(R.dimen.standard_65));
-    }
-
-    private void closeFABMenu(){
-        isFABOpen=false;
-        fabcgpa.animate().translationY(0);
-        fabadd.animate().translationY(0);
     }
     public void onViewCreated(View view, Bundle savedInstanceState) {
 

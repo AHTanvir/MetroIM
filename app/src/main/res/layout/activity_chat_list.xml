@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#888888"
+    android:background="@drawable/chat_screen"
     android:orientation="vertical" >
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:minHeight="?attr/actionBarSize"
-        android:background="#2196F3"
+        android:background="#26F32FFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
@@ -37,12 +37,13 @@
         android:id="@+id/lv_chat"
         android:layout_width="match_parent"
         android:layout_marginTop="55dp"
+        android:padding="1dp"
         android:layout_height="520dp"
         android:cacheColorHint="@null"
         android:divider="@null"
         android:listSelector="@null"
         android:stackFromBottom="true"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="60dp"
         android:transcriptMode="disabled">
     </ListView>
     <ProgressBar
@@ -54,23 +55,30 @@
         android:background="@drawable/custom_progressbar" />
     <EditText
         android:id="@+id/Chat_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:background="@drawable/chat_item_right_normal"
-        android:layout_marginRight="55dp"
-        android:layout_marginLeft="3dp"
+        android:layout_width="fill_parent"
+        android:layout_height="57dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="16dp"
+        android:layout_margin="2dp"
+        android:background="@drawable/edit_text_style"
+        android:inputType="textMultiLine"
+        android:imeOptions="actionSend"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:textColor="#009999" />
-    <Button
-        android:id="@+id/Chat_send_button"
-        android:layout_width="60dp"
-        android:layout_height="62dp"
-        android:background="@drawable/sendbtn"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="5dp"/>
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/Chat_send_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="7dp"
+            android:background="@drawable/circle_transparent_color"
+            app:srcCompat="@android:drawable/ic_menu_send" />
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

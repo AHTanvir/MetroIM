@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
@@ -116,6 +118,9 @@ public class ChatListFragment extends Fragment implements OnItemClickListeners{
        // databaseHandler.getViewForChatFrag();
         adapter = new ChatFragmentAdapter(arraylist.getmInstance().getChatlist(),this);
         layoutManager=new LinearLayoutManager(getActivity());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getActivity().getBaseContext(), R.drawable.recycle_item_divider));
+        recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         // profile_picture.recycle();
@@ -157,6 +162,7 @@ public class ChatListFragment extends Fragment implements OnItemClickListeners{
         getActivity().getMenuInflater().inflate(R.menu.main, menu);
        //View v = (View) menu.findItem(R.id.action_search).getActionView();
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setQueryHint("Name");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
@@ -195,14 +201,13 @@ public class ChatListFragment extends Fragment implements OnItemClickListeners{
         popupWindow.setAnchorView(v.findViewById(R.id.contact_name));
         popupWindow.setAdapter(arrayAdapter);
         popupWindow.setWidth(250);
-        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.color.white));
-        // note: don't use pixels, use a dimen resource// the callback for when a list item is selected
+        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.dialog_background));
+        //popupWindow.setBackgroundDrawable(getResources().getDrawable(R.color.color_popuu));
         popupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 popupWindow.dismiss();
-                if(arr[position]=="View Profile")
-                {
+                if(arr[position]=="View Profile") {
                     ((MainActivity)getActivity()).viewFriendInfo("&getFriendInfo=",itm.getNumber(),itm.getName(),getActivity());
                     Toast.makeText(getActivity(),"View",Toast.LENGTH_SHORT).show();
                 }else {

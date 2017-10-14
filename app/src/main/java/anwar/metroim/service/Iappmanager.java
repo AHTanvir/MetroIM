@@ -25,4 +25,5 @@ public interface Iappmanager {
     public void MessageReceived(String from,String sentdt,String mType,String message);
     public String send_Sms(String phone);
     public String resetPassword(String Phone) throws UnsupportedEncodingException;
+    public String sendNoticeToStudent(String dept,String id,String msg,String type,String name);
 }

@@ -1,12 +1,14 @@
 package anwar.metroim;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -25,7 +27,9 @@ import anwar.metroim.PhoneContactSynchronization.PhoneContacts;
 import anwar.metroim.service.MetroImservice;
 import anwar.metroim.service.Iappmanager;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener,View.OnTouchListener {
+import static anwar.metroim.Constant.PHONE_PATTERN;
+
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener,View.OnTouchListener,View.OnFocusChangeListener {
     public static final String NO_NEW_UPDATE="9";
     public static final String AUTHENTICATION_FAILED = "0";
     public static final int REQUEST_CODE = 121;
@@ -36,6 +40,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private boolean visibility=false;
     private Iappmanager man_ger=new MetroImservice();
     private SessionManager session;
+    private TextInputLayout rest_input_layout;
     IphoneContacts iphoneContacts=new PhoneContacts();
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -63,11 +68,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         session=new SessionManager(getApplicationContext());
         setContentView(R.layout.activity_login);
         context=this.getApplicationContext();
+        rest_input_layout=(TextInputLayout)findViewById(R.id.reset_laout);
         //EditText
         login_phone=(EditText)findViewById(R.id.login_phone);
         login_password=(EditText)findViewById(R.id.login_password);
         resetphone=(EditText)findViewById(R.id.resetphone);
-        login_phone.setOnTouchListener(this);
+        login_phone.setOnFocusChangeListener(this);
         resetphone.setOnTouchListener(this);
         //TextView
         tv_forgetpassword=(TextView)findViewById(R.id.tv_forgetpassword);
@@ -81,6 +87,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btn_register.setOnClickListener(this);
         reset_passBtn.setOnClickListener(this);
         reset_cancelBtn.setOnClickListener(this);
+        login_password.setOnFocusChangeListener(this);
 
         // For android 6 or above version i just set  targetSdkVersion 22 so android os manage all dangerous permisson
       /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -92,7 +99,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_login:
-                login();
+                if(login_password.length()>4)
+                    login();
+                else login_password.setError("Too Short");
                 break;
             case R.id.btn_register:
                Intent ii = new Intent(LoginActivity.this,RegisterActivity.class);
@@ -128,9 +137,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     if(result.equals("1"))
                                     {
                                         hide();
-                                        Toast.makeText(LoginActivity.this,"NEW PASSWORD SEND VIA SMS",Toast.LENGTH_LONG).show();
+                                        Toast.makeText(LoginActivity.this,"New password send via sms",Toast.LENGTH_LONG).show();
                                     }
-                                    else Toast.makeText(LoginActivity.this,"MAKE SURE PHONE NUMBER CORRECT",Toast.LENGTH_SHORT).show();
+                                    else Toast.makeText(LoginActivity.this,"Make sure phone number correct",Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -148,7 +157,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             btn_login.setVisibility(View.GONE);
             btn_register.setVisibility(View.GONE);
             tv_forgetpassword.setVisibility(View.GONE);
-            resetphone.setVisibility(View.VISIBLE);
+            rest_input_layout.setVisibility(View.VISIBLE);
             reset_passBtn.setVisibility(View.VISIBLE);
             reset_cancelBtn.setVisibility(View.VISIBLE);
             visibility=true;
@@ -159,7 +168,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             btn_login.setVisibility(View.VISIBLE);
             btn_register.setVisibility(View.VISIBLE);
             tv_forgetpassword.setVisibility(View.GONE);
-            resetphone.setVisibility(View.GONE);
+            rest_input_layout.setVisibility(View.GONE);
             reset_passBtn.setVisibility(View.GONE);
             reset_cancelBtn.setVisibility(View.GONE);
             visibility=false;
@@ -167,10 +176,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void login() {
-        if(login_phone.getText().length()>0 && login_password.length()>0)
-        {
+        if(isValid()) {
             if(man_ger.isNetworkConnected())
             {
+               final ProgressDialog progressDialog= new ProgressDialog(this,R.style.MyAlertDialogThemeDatePicker);
+                progressDialog.setIndeterminate(false);
+                progressDialog.setMessage("Loging...");
+                progressDialog.show();
                 Thread loginThread = new Thread() {
                     Handler loginHandeler = new Handler();
                     String result = new String();
@@ -183,11 +195,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                         }
-                        if (!result.equals(AUTHENTICATION_FAILED) ) {
+                        if (result!=null && !result.equals(AUTHENTICATION_FAILED) ) {
                             loginHandeler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    //  Toast.makeText(context,result,Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
                                     session.createLoginSession(login_phone.getText().toString(),login_password.getText().toString());
                                     Intent i=new Intent(LoginActivity.this,UpdaterManagerActivity.class);
                                     startService(new Intent(LoginActivity.this,MetroImservice.class));
@@ -202,6 +214,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 public void run() {
                                     Toast.makeText(context,"Make sure Phone and Password correct",Toast.LENGTH_SHORT).show();
                                     tv_forgetpassword.setVisibility(View.VISIBLE);
+                                    progressDialog.dismiss();
                                 }
                             });
                         }
@@ -250,7 +263,47 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.resetphone:
                 resetphone.setText(iphoneContacts.getPrefixCountyCode(context));
                 break;
+            case R.id.login_password:
+                if(!login_phone.getText().toString().matches("\\+\\d{13}")) {
+                    login_phone.setError("Invalid phone");
+                    login_phone.bringToFront();
+                }
+                break;
         }
         return false;
+    }
+    private boolean isValid(){
+        boolean isOk=true;
+        if(!login_phone.getText().toString().matches(PHONE_PATTERN)){
+            isOk=false;
+            login_phone.setError("Invalid phone Number");
+        }
+        if(login_password.length()<4){
+            isOk=false;
+            login_password.setError("Too short! Password length must be grather then 4");
+        }
+        return isOk;
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        switch (v.getId()) {
+            case R.id.login_phone:
+                if(hasFocus)
+                    login_phone.setText(iphoneContacts.getPrefixCountyCode(context));
+                else if(!login_phone.getText().toString().matches("\\+\\d{13}")) {
+                    login_phone.setError("Invalid phone");
+                    login_phone.bringToFront();
+                }
+                break;
+            case R.id.resetphone:
+                resetphone.setText(iphoneContacts.getPrefixCountyCode(context));
+                break;
+            case R.id.login_password:
+                if(!hasFocus && login_password.length()<4){
+                    login_password.setError("Too short! Password length must be grather then 4");
+                }
+                break;
+        }
     }
 }

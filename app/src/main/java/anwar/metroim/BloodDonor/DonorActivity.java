@@ -4,13 +4,14 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -50,8 +51,8 @@ import anwar.metroim.R;
 import anwar.metroim.service.MetroImservice;
 import anwar.metroim.service.Iappmanager;
 
-public class donorActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,View.OnClickListener {
-    private Spinner spinner,dspinner;
+public class DonorActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,View.OnClickListener,View.OnFocusChangeListener {
+        private Spinner spinner,dspinner;
     private AlertDialog dialog;
     private ListView listView;
     private TextView  donorName,donorNumber;
@@ -88,7 +89,7 @@ public class donorActivity extends AppCompatActivity implements AdapterView.OnIt
             // Because it is running in our same process, we should never
             // see this happen.
             man_ger = null;
-            Toast.makeText(donorActivity.this, "loooog",
+            Toast.makeText(DonorActivity.this, "loooog",
                     Toast.LENGTH_SHORT).show();
         }
     };
@@ -114,6 +115,10 @@ public class donorActivity extends AppCompatActivity implements AdapterView.OnIt
         recycleradapter = new DonorRecyclerAdapter(rowitem);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.recycle_item_divider));
+        recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(recycleradapter);
         inflater= this.getLayoutInflater();
@@ -124,7 +129,6 @@ public class donorActivity extends AppCompatActivity implements AdapterView.OnIt
     }
 
     private void addItemOnSpinner(Spinner spinnerr) {
-        // spinner.setPrompt("Select Blood Group");
         spinneradapter = new spinnerAdapter(this, R.layout.custom_spinner_item);
         spinneradapter.addAll(bloodGroup);
         spinneradapter.add("Select Blood Group");
@@ -137,7 +141,7 @@ public class donorActivity extends AppCompatActivity implements AdapterView.OnIt
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent i = new Intent(donorActivity.this, MainActivity.class);
+        Intent i = new Intent(DonorActivity.this, MainActivity.class);
         finish();
         startActivity(i);
     }
@@ -151,7 +155,7 @@ public class donorActivity extends AppCompatActivity implements AdapterView.OnIt
     @Override
     protected void onResume() {
         super.onResume();
-        bindService(new Intent(donorActivity.this, MetroImservice.class), mConnection, Context.BIND_AUTO_CREATE);
+        bindService(new Intent(DonorActivity.this, MetroImservice.class), mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -173,7 +177,7 @@ public class donorActivity extends AppCompatActivity implements AdapterView.OnIt
             return true;
         }
         if (id == R.id.update_date) {
-            ShowDatePickerDialog(donorActivity.this);
+            ShowDatePickerDialog(DonorActivity.this);
             return true;
         }
         if (id == R.id.donor_delete) {
@@ -192,17 +196,17 @@ public class donorActivity extends AppCompatActivity implements AdapterView.OnIt
 
     private void ShowDatePickerDialog(Context context) {
         this.context=context;
-        DatePickerDialog datePicker=new DatePickerDialog(context,R.style.AppTheme,
+        DatePickerDialog datePicker=new DatePickerDialog(context,R.style.MyAlertDialogThemeDatePicker,
                 datePickerListener,calander.get(Calendar.YEAR),
                 calander.get(Calendar.MONTH),
                 calander.get(Calendar.DAY_OF_MONTH));
         datePicker.setCancelable(false);
         datePicker.setTitle("Select donation date");
+        datePicker.setFeatureDrawable(0,getResources().getDrawable(R.drawable.dialog_background));
         datePicker.show();
     }
     private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
         String params=null;
-        // when dialog box is closed, below method will be called.
         public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
             calander.set(selectedYear,selectedMonth,selectedDay);
             try {
@@ -258,8 +262,6 @@ public class donorActivity extends AppCompatActivity implements AdapterView.OnIt
                 break;
         }
         if (spinner.getSelectedItem() == "Select Blood Group") {
-
-            //Do nothing.
         } else {
 
         }
@@ -288,6 +290,8 @@ public class donorActivity extends AppCompatActivity implements AdapterView.OnIt
         recycleradapter = new DonorRecyclerAdapter(rowitem);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.HORIZONTAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(recycleradapter);
     }
@@ -301,46 +305,28 @@ public class donorActivity extends AppCompatActivity implements AdapterView.OnIt
         donorNumber.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                donorNumber.setText(iphoneContacts.getPrefixCountyCode(donorActivity.this));
+                donorNumber.setText(iphoneContacts.getPrefixCountyCode(DonorActivity.this));
                 return false;
             }
         });
        addItemOnSpinner(dspinner);
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Register");
-        // this is set the view from XML inside AlertDialog
+        AlertDialog.Builder alert = new AlertDialog.Builder(this,R.style.MyAlertDialogTheme);
         alert.setView(alertLayout);
-        // disallow cancel of AlertDialog on click of back button and outside touch
-        alert.setCancelable(false);
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+        alert.setCancelable(true);
         dialog = alert.create();
         dialog.show();
-        dspinner.setOnItemSelectedListener(this);
-        /*
-        dspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        dspinner.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (dspinner.getSelectedItem()== "Select Blood Group"){
-                  //  dialog.dismiss();
-                }
-                else{
-                    dialog.dismiss();
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public boolean onTouch(View v, MotionEvent event) {
+                if(donorName.length()>=5){
+                      if(donorNumber.getText().toString().matches("\\+\\d{13}"))
+                          dspinner.setOnItemSelectedListener(DonorActivity.this);
+                        else donorNumber.setError("Invalid phone number");
+                }else donorName.setError("Too Short");
 
+                return false;
             }
         });
-        */
-        // final Button button=dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        //button.setEnabled(false);
-
     }
 
 
@@ -350,7 +336,7 @@ public class donorActivity extends AppCompatActivity implements AdapterView.OnIt
      */
 private void sendDonorRequest(final String params, final String action){
     result=null;
-    final ProgressDialog progressDialog=new ProgressDialog(donorActivity.this);
+    final ProgressDialog progressDialog=new ProgressDialog(DonorActivity.this);
     progressDialog.setMessage("DOWNLOADING......");
    progressDialog.show();
    final Handler handeler=new Handler();
@@ -398,13 +384,23 @@ private void sendDonorRequest(final String params, final String action){
 
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
+        switch (v.getId()) {
             case R.id.donorActivity_back:
                 Toast.makeText(this,"back",Toast.LENGTH_SHORT).show();
                 this.onBackPressed();
                 break;
+            case R.id.dialog_spinner:
+                if(donorName.length()<=5)
+                    donorName.setError("Too Shor");
+                if(!donorNumber.getText().toString().matches("\\+\\d{13}"))
+                    donorName.setError("Invalid phone number");
+                break;
 
         }
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+
     }
 }

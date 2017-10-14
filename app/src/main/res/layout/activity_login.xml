@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:background="@color/colorPrimary"
     tools:context="anwar.metroim.LoginActivity">
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,97 +14,98 @@
         android:text="MetroIM"
         android:textSize="30dp"
         android:padding="20dp"
-        android:textColor="@color/white"
+        android:textColor="@color/forestgreen"
         tools:ignore="HardcodedText,SpUsage" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="10dp">
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/login_phone"
+                android:hint="Phone"
+                tools:ignore="HardcodedText"
+                android:maxLines="1"
+                tools:inputType="number" />
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:ems="10"
+                android:id="@+id/login_password"
+                android:hint="Password"
+                android:textColorHint="@color/white"
+                tools:ignore="HardcodedText"
+                android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_forgetpassword"
+            android:text="Forget Password"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:visibility="gone"/>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            android:id="@+id/reset_laout">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your phone number"
+                android:id="@+id/resetphone"
+                android:inputType="number" />
+            </android.support.design.widget.TextInputLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/reset_passBtn"
+            android:background="@drawable/button_style"
+            android:text="Reset Password"
+            android:visibility="gone"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/reset_cancelBtn"
+            android:background="@drawable/button_style"
+            android:text="Cancel"
+            android:visibility="gone"/>
+        <Button
+            android:text="LOGIN"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_login"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/button_style"
+            tools:ignore="HardcodedText" />
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/login_phone"
-        android:hint="Phone"
-        android:textColorHint="@color/white"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        tools:ignore="HardcodedText"
-        android:maxLines="1"
-        tools:inputType="number" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/login_password"
-        android:hint="Password"
-        android:textColorHint="@color/white"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        tools:ignore="HardcodedText"
-        android:maxLines="1" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_forgetpassword"
-        android:text="Forget Password"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:visibility="gone"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter your phone number"
-        android:id="@+id/resetphone"
-        android:inputType="number"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:visibility="gone"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/reset_passBtn"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:text="Reset Password"
-        android:visibility="gone"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/reset_cancelBtn"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:text="Cancel"
-        android:visibility="gone"/>
-    <Button
-        android:text="LOGIN"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/btn_login"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:onClick="login"
-        tools:ignore="HardcodedText" />
-
-    <Button
-        android:text="REGISTER"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/btn_register"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:onClick="register"
-        tools:ignore="HardcodedText" />
-
+        <Button
+            android:text="REGISTER"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_register"
+            android:background="@drawable/button_style"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
 </LinearLayout>

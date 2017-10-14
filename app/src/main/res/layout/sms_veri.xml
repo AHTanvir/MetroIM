@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enter Verification Code "
+        android:text="Phone Verification"
+        android:textAlignment="center"
+        android:textSize="18sp"
         android:layout_margin="10dp"/>
     <EditText
         android:id="@+id/veri_code"
@@ -23,6 +25,7 @@
         android:id="@+id/verificatonbtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/button_style"
         android:text="Ok"
         android:layout_margin="10dp"/>
 
@@ -30,6 +33,8 @@
         android:id="@+id/resendbtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/button_style"
         android:text="Resend"
-        android:layout_margin="10dp"/>
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
 </LinearLayout>

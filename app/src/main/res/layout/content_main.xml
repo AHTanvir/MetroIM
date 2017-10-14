@@ -7,21 +7,20 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="anwar.metroim.MainActivity"
     tools:showIn="@layout/app_bar_main"
-    android:background="#638f58"
-    tools:background="#638f58"
+    android:background="@color/colorPrimary"
+    tools:background="#ffffff"
     android:id="@+id/Relative_layoutfor_fragments">
 
     <android.support.design.widget.TabLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="#cc228522"
         android:id="@+id/tab_view">
         <android.support.design.widget.TabItem
             android:id="@+id/chat_tab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Chat" />
-
         <android.support.design.widget.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

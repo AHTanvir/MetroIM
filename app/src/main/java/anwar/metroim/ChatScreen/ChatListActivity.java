@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import java.text.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,9 +46,11 @@ import java.util.regex.Pattern;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
+import anwar.metroim.Constant;
 import anwar.metroim.CustomImage.CompressImage;
 import anwar.metroim.CustomImage.getCustomImage;
 import anwar.metroim.Adapter.ChatAdapter;
+import anwar.metroim.ImageViewDialog;
 import anwar.metroim.Model.ChatModel;
 
 import anwar.metroim.Adapter.arrayList;
@@ -81,9 +85,10 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
     private LinearLayout mRevealView;
     private boolean hidden = true;
     private ImageButton gallery_btn, photo_btn;
+    private ImageButton Chat_send_button;
     private ImageView toolbar_imageView;
     private TextView CustomAcBar_name,CustomAcBar_lastSeen;
-    private Button Chat_send_button,toolbar_backButton;
+    private Button toolbar_backButton;
     private Iappmanager man_ger;
     public  static String currentDateHolder="date";
     private String active_friend_phone;
@@ -108,16 +113,17 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
             // service that we know is running in our own process, we can
             // cast its IBinder to a concrete class and directly access it.
             man_ger= ((MetroImservice.IMBinder)service).getService();
-          new Thread(new Runnable() {
-              @Override
-              public void run() {
-                  try {
-                      man_ger.getLastSeen();
-                  } catch (UnsupportedEncodingException e) {
-                      e.printStackTrace();
-                  }
-              }
-          }).start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if(active_friend_phone.matches("\\+\\d{13}"))
+                            man_ger.getLastSeen();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -147,9 +153,10 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
         notificationManager.cancelAll();
     }
     private void chatScreenView(){
-        Chat_send_button=(Button)findViewById(R.id.Chat_send_button);
+        Chat_send_button=(ImageButton) findViewById(R.id.Chat_send_button);
         Chat_edit_text=(EditText)findViewById(R.id.Chat_edit_text);
         add_contactBtn=(FloatingActionButton)findViewById(R.id.add_contactBtn);
+        mListView = (ListView) findViewById(R.id.lv_chat);
         Chat_send_button.setOnClickListener(this);
         add_contactBtn.setOnClickListener(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -167,12 +174,12 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
         CustomAcBar_name.setText(active_friend_name);
         if(active_friend_name.matches("\\+\\d{13}")) {
             add_contactBtn.setVisibility(View.VISIBLE);
-        }
+        }else if(!active_friend_phone.matches("\\+\\d{13}"))
+            hide();
         if(totalConversion>0){
-           Chat_list=databaseHandler.getMessage(active_friend_phone);
+            Chat_list=databaseHandler.getMessage(active_friend_phone);
         }
-        mListView = (ListView) findViewById(R.id.lv_chat);
-       // mListView.setStackFromBottom(true);
+        // mListView.setStackFromBottom(true);
         mAdapter= new ChatAdapter(Chat_list);
         mListView.setAdapter(mAdapter);
         databaseHandler.updateMessage(active_friend_phone);
@@ -197,8 +204,7 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
             return true;
         }
         if (id == R.id.attachment) {
-            if(isHidden)
-            {
+            if(isHidden) {
                 mRevealView.setVisibility(View.VISIBLE);
                 isHidden=false;
             }
@@ -206,60 +212,6 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
                 mRevealView.setVisibility(View.GONE);
                 isHidden=true;
             }
-
-        /*    int cx = (mRevealView.getLeft() + mRevealView.getRight());
-            int cy = mRevealView.getTop();
-            int radius = Math.max(mRevealView.getWidth(), mRevealView.getHeight());
-            //Below Android LOLIPOP Version
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                SupportAnimator animator =io.codetail.animation.ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, 0, radius);
-                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                animator.setDuration(700);
-                SupportAnimator animator_reverse = animator.reverse();
-                if (hidden) {
-                    mRevealView.setVisibility(View.VISIBLE);
-                    animator.start();
-                    hidden = false;
-                } else {
-                    if (animator_reverse != null) {
-                        animator_reverse.addListener(new SupportAnimator.AnimatorListener() {
-                            @Override
-                            public void onAnimationStart() {}
-                            @Override
-                            public void onAnimationEnd() {
-                                mRevealView.setVisibility(View.INVISIBLE);
-                                hidden = true;
-                            }
-                            @Override
-                            public void onAnimationCancel() {}
-                            @Override
-                            public void onAnimationRepeat() {}
-                        });
-                        animator_reverse.start();
-                    }
-                }
-            }
-            // Android LOLIPOP And ABOVE Version
-            else {
-                if (hidden) {
-                    Animator anim = android.view.ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, 0, radius);
-                    mRevealView.setVisibility(View.VISIBLE);
-                    anim.start();
-                    hidden = false;
-                } else {
-                    Animator anim = android.view.ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, radius, 0);
-                    anim.addListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            mRevealView.setVisibility(View.INVISIBLE);
-                            hidden = true;
-                        }
-                    });
-                    anim.start();
-                }
-            }
-            return true;*/
         }
 
         return super.onOptionsItemSelected(item);
@@ -284,6 +236,15 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
         MessageInfo.frndStatus=null;
         MessageInfo.frndIP=null;
     }
+    private void hide(){
+        Chat_edit_text.setVisibility(View.GONE);
+        Chat_send_button.setVisibility(View.GONE);
+        CustomAcBar_lastSeen.setVisibility(View.GONE);
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams)mListView.getLayoutParams();
+        layoutParams.setMargins(0, 70, 0, 0);
+        mListView.requestLayout();
+        mListView.setStackFromBottom(false);
+    }
     @Override
     protected void onResume()
     {
@@ -301,8 +262,7 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onActivityResult(int requestCode, final int resultCode, Intent data){
         super.onActivityResult(requestCode,requestCode,data);
-        if(data != null)
-        {
+        if(data != null) {
             if (requestCode==REQUEST_CODE_PICTURE && resultCode== Activity.RESULT_OK)
             {
                 Uri file=data.getData();
@@ -310,6 +270,7 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
                 String id=addItem(path,1,"image",1);
                 databaseHandler.updateMessage(id,1);
                 man_ger.FileUpload(path,active_friend_phone,"image",0,id);
+                mListView.setSelection(mAdapter.getCount()-1);
             }
             else if (requestCode==REQUEST_CODE_PDF&& resultCode== Activity.RESULT_OK)
             {
@@ -317,6 +278,7 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
                 String id=addItem(filePath,0,"pdf",1);
                 databaseHandler.updateMessage(id,1);
                 man_ger.FileUpload(filePath,active_friend_phone,"pdf",0,id);
+                mListView.setSelection(mAdapter.getCount()-1);
             }
             else if(requestCode==REQUEST_CODE_ADD_CONTACT)
             {
@@ -341,14 +303,12 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
                 String type=extra.getString(MessageInfo.MESSAGE_TYPE);
                 String msg=extra.getString(MessageInfo.MESSAGE_LIST);
                 System.out.println("new messsgs from "+userPhone +" user "+active_friend_phone);
-                if(active_friend_phone.equals(userPhone))
-                {
+                if(active_friend_phone.equals(userPhone)) {
                     String datearr[];
                     datearr=databaseHandler.praseDate(date);
                     if(type.equals("image"))
                         typ=3;
                     else typ =2;
-
                     content=msg;
                     ChatModel item = new ChatModel(typ,content,datearr[1],datearr[0]);
                     Chat_list.add(item);
@@ -481,29 +441,37 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
         }
     }
     public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-       final ChatModel item=(ChatModel)parent.getItemAtPosition(position);
-       final String content=item.getContent();
+        final ChatModel item=(ChatModel)parent.getItemAtPosition(position);
+        final String content=item.getContent();
         final int vis=item.getVisibility();
         String rowId=item.getId();
         if(item.getType()==(3) ||item.getType()==(1)) {
-                if (content.startsWith("http://") && vis==0) {
-                    if(man_ger.isNetworkConnected()) {
-                        updaeteChatList(content, position, 1);
-                        databaseHandler.updateMessage(rowId, 1);
-                        man_ger.fileDownload(content, active_friend_phone, item.getId(), position);
-                    } else Toast.makeText(ChatListActivity.this,"Not Conected to Inertnet",Toast.LENGTH_SHORT).show();
-                }
-                else if (content.endsWith(".jpg") && vis !=1){
-                    File file = new File(content);
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(file),  "image/jpg");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    startActivity(intent);
-                }
+            if (content.startsWith("http://") && vis==0) {
+                if(man_ger.isNetworkConnected()) {
+                    updaeteChatList(content, position, 1);
+                    databaseHandler.updateMessage(rowId, 1);
+                    man_ger.fileDownload(content, active_friend_phone, item.getId(), position);
+                } else Toast.makeText(ChatListActivity.this,"Not Conected to Inertnet",Toast.LENGTH_SHORT).show();
+            }
+            else if (content.endsWith(".jpg") && vis !=1){
+               try{
+                   File file = new File(content);
+                   Intent intent = new Intent(Intent.ACTION_VIEW);
+                   intent.setDataAndType(Uri.fromFile(file),  "image/*");
+                   intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                   //intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                   startActivity(intent);
+               }
+               catch (ActivityNotFoundException ex){
+                   Toast.makeText(this,"ActivityNotFound",Toast.LENGTH_SHORT).show();
+                   ImageViewDialog dialog=ImageViewDialog.newInstance(content,"");
+                   FragmentManager fm = getSupportFragmentManager();
+                   dialog.show(fm, Constant.TAG_IMAGEVIWER_FRAGMENT);
+               }
+            }
         }
         else if(content.startsWith("http://") && vis!=1) {
-            if(man_ger.isNetworkConnected())
-            {
+            if(man_ger.isNetworkConnected()) {
                 progres_bar=(ProgressBar)view.findViewById(R.id.simpleProgressBar);
                 updaeteChatList(content,position,1);
                 databaseHandler.updateMessage(rowId,1);
@@ -511,13 +479,13 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
             } else Toast.makeText(ChatListActivity.this,"Not Conected to Inertnet",Toast.LENGTH_SHORT).show();
         }
         else if(content.endsWith(".pdf") && vis !=1) {
-               try {
-                   File file = new File(content);
-                   Intent intent = new Intent(Intent.ACTION_VIEW);
-                   intent.setDataAndType(Uri.fromFile(file), "application/pdf");
-                   intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                   startActivity(intent);
-               }catch (ActivityNotFoundException e){Toast.makeText(context,"No app to perform",Toast.LENGTH_LONG).show();}
+            try {
+                File file = new File(content);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(intent);
+            }catch (ActivityNotFoundException e){Toast.makeText(context,"No app to perform",Toast.LENGTH_LONG).show();}
         }
     }
     public void sendMeg(final String msg, final String mType,final String RowId){
@@ -533,19 +501,18 @@ public class ChatListActivity extends AppCompatActivity implements View.OnClickL
                     e.printStackTrace();
                 }
                 handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(result !=null &&result.equals("1"))
-                            {
-                                Toast.makeText(context,"Msg sent",Toast.LENGTH_SHORT).show();
-                            }
-                            else{
-                                Toast.makeText(context,"Msg Can't be send",Toast.LENGTH_SHORT).show();
-                                mAdapter.updateAdapter(databaseHandler.getMessage(active_friend_phone));
-                            }
+                    @Override
+                    public void run() {
+                        if(result !=null &&result.equals("1")) {
+                            Toast.makeText(context,"Msg sent",Toast.LENGTH_SHORT).show();
                         }
-                    });
-                }
+                        else{
+                            Toast.makeText(context,"Msg Can't be send",Toast.LENGTH_SHORT).show();
+                            mAdapter.updateAdapter(databaseHandler.getMessage(active_friend_phone));
+                        }
+                    }
+                });
+            }
         }.start();
     }
     private String addItem(String msg,int ItemTyp,String Mtype,int visibility) {

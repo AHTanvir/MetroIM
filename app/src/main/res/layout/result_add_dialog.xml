@@ -2,97 +2,67 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:background="@color/cardview_dark_background"
+    android:padding="10dp"
     android:layout_height="match_parent">
-    <LinearLayout
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dilog_titel"
+        android:layout_gravity="center_horizontal"
+        android:text="Add Result"
+        android:textSize="18sp"
+        />
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".3"
-            android:text="Subject:" />
-
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
         <EditText
             android:id="@+id/add_resultSubject"
-            android:layout_width="0dp"
+            android:hint="Subject Name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight=".7"
-            android:imeOptions="actionDone"
-
+            android:textColor="@color/cardview_dark_background"
+            android:imeOptions="actionNext"
             android:inputType="text"
             android:singleLine="true" />
-    </LinearLayout>
-    <LinearLayout
+        </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".3"
-            android:text="Credit:" />
-
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
         <EditText
             android:id="@+id/add_resultCredit"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight=".7"
+            android:textColor="@color/cardview_dark_background"
+            android:hint="Subject Credit"
             android:imeOptions="actionDone"
             android:inputType="text"
             android:singleLine="true" />
-    </LinearLayout>
-    <LinearLayout
+        </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".3"
-            android:text="GPA:" />
-
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
         <EditText
             android:id="@+id/add_resultGpa"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight=".7"
+            android:textColor="@color/cardview_dark_background"
             android:imeOptions="actionDone"
+            android:hint="Subject GPA"
             android:inputType="text"
             android:singleLine="true" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingTop="10dp"
-        android:orientation="horizontal">
-
+        </android.support.design.widget.TextInputLayout>
         <Button
             android:id="@+id/add_result_OkButton"
-            android:layout_width="100dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/button_style"
             android:popupBackground="#579073"
             android:text="Insert" />
-        <Button
-            android:id="@+id/add_result_calcelButton"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:popupBackground="#579073"
-            android:text="Cancel" />
-    </LinearLayout>
-
 </LinearLayout>

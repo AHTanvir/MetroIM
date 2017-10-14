@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/cardview_light_background"
     android:padding="10dp">
     <TextView
         android:layout_width="wrap_content"
@@ -13,20 +13,27 @@
         android:textColor="@color/cardview_dark_background"
         android:padding="5dp"
         android:textSize="18sp"/>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="8dp">
     <AutoCompleteTextView
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_margin="5dp"
-        android:layout_gravity="center_horizontal"
         android:padding="5dp"
-        android:background="#0d000000"
+        android:hint="Write Status"
         android:textColor="@color/cardview_dark_background"
         android:id="@+id/auto_text"/>
+    </android.support.design.widget.TextInputLayout>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:background="@color/cardview_dark_background"
+        android:background="@drawable/button_style"
         android:text="Update"
         android:layout_gravity="center_horizontal"
         android:id="@+id/btn_update"/>

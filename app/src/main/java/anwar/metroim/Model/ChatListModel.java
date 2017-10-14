@@ -42,6 +42,7 @@ public class ChatListModel {
         this.number = number;
     }
 
+/*
     public ChatListModel(String name, Bitmap image, boolean newmsg, String date, String number, String total) {
         this.name = name;
         this.image = image;
@@ -50,6 +51,7 @@ public class ChatListModel {
         this.number = number;
         this.total = total;
     }
+*/
 
     public String getName() {
         return name;

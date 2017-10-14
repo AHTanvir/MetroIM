@@ -101,13 +101,11 @@ public class MetroImservice extends Service implements Iappmanager {
 
     }
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("LocalService", "Received start id " + startId + ": " + intent);
-        if(socketOperator ==null && timer ==null) {
+        if(timer ==null) {
             timer=new Timer();
             socketOperator=new SocketConnection(this);
             databaseHandler = new DatabaseHandler(this);
         }
-        arrayList.getmInstance().setServiceIsRunning(true);
          spre = PreferenceManager.getDefaultSharedPreferences(this);
         if(setUserId()){
             arrayList.getmInstance().setServiceIsRunning(true);
@@ -188,10 +186,8 @@ public class MetroImservice extends Service implements Iappmanager {
                 "&";
         String result = socketOperator.sendHttpRequest(params);
         //Server send result in json array formet so need to decode and store store local database
-        if(result !="0")
-        {
+        if(result !="0") {
             this.decodeUserUpdateInfo(result);
-
         }
         return "1";
     }
@@ -204,8 +200,7 @@ public class MetroImservice extends Service implements Iappmanager {
                 "&friendphone="+URLEncoder.encode(MessageInfo.ACTIVEFRIEND_PHONE,"UTF-8")+
                 "&";
         String res=socketOperator.sendHttpRequest(params);
-        if(res !="0")
-        {
+        if(res !="0") {
             try {
                 JSONObject ja=new JSONObject(res);
                 Intent lastseen = new Intent("LAST_SEEN");
@@ -252,37 +247,38 @@ public class MetroImservice extends Service implements Iappmanager {
         return result;
     }
     //
-    private  void SceduleTimer(){
-               timer.schedule(new TimerTask() {
-                   public void run() {
-                       if(isNetworkConnected()) {
-                           try {
-                               final String email=getBackupEmail();
-                               if(email !=null )
-                               {
-                                   if(new Date().after(dbfmtDate.parse(spre.getString("date",""))))
-                                   {
-                                       new Thread(new Runnable() {
-                                           @Override
-                                           public void run() {
-                                               new DbBackup(MetroImservice.this,email);
-                                           }
-                                       }).start();
-                                   }
-                               }
-                               String result2 = MetroImservice.this.getMessage();
-                               if(MessageInfo.ACTIVEFRIEND_PHONE !=null)
-                               {
-                                   MetroImservice.this.getLastSeen();
-                               }
-                           } catch (Exception e) {
-                               e.printStackTrace();
-                               System.out.println("m e "+e);
-                           }
-                       }else exit();
+    private  void SceduleTimer() {
+        try {
+            timer.schedule(new TimerTask() {
+                public void run() {
+                    if (isNetworkConnected()) {
+                        try {
+                            final String email = getBackupEmail();
+                            if (email != null) {
+                                if (new Date().after(dbfmtDate.parse(spre.getString("date", "")))) {
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            new DbBackup(MetroImservice.this, email);
+                                        }
+                                    }).start();
+                                }
+                            }
+                            String result2 = MetroImservice.this.getMessage();
+                            if (MessageInfo.ACTIVEFRIEND_PHONE != null) {
+                                MetroImservice.this.getLastSeen();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            System.out.println("m e " + e);
+                        }
+                    } else exit();
 
-                   }
-               }, UPDATE_TIME_PERIOD, UPDATE_TIME_PERIOD);
+                }
+            }, UPDATE_TIME_PERIOD, UPDATE_TIME_PERIOD);
+        } catch (IllegalArgumentException ex) {
+            System.out.println("meroimservice time schedular IllegalArgumentException "+ex);
+        }catch(IllegalStateException e){System.out.println("meroimservice time schedular IllegalStateException "+e);}
     }
     private String getAuthenticateUserParams(String usernameText, String passwordText) throws UnsupportedEncodingException {
         String params = "&phone=" + URLEncoder.encode(usernameText, "UTF-8") +
@@ -298,16 +294,14 @@ public class MetroImservice extends Service implements Iappmanager {
         String params = null;
         String result=null;
         String contactlist=new PhoneContacts().getAllContactNumber(this);
-        if(contactlist !=null)
-        {
+        if(contactlist !=null) {
             params = "&phone=" + URLEncoder.encode(this.userphone, "UTF-8") +
                     "&password=" + URLEncoder.encode(this.password, "UTF-8") +
                     "&action=" +URLEncoder.encode("contactUpdate", "UTF-8") +
                     "&json=" +URLEncoder.encode(contactlist, "UTF-8") +
                     "&";
             result= socketOperator.sendHttpRequest(params);
-            if(result !=LoginActivity.NO_NEW_UPDATE)
-            {
+            if(result !=LoginActivity.NO_NEW_UPDATE) {
                 new StoreContacts(this).JosnDecoding(result);
                 result="updated";
             }
@@ -320,6 +314,7 @@ public class MetroImservice extends Service implements Iappmanager {
     //this method return value acoording para String
     //
     public String updateInfo(String para)throws UnsupportedEncodingException {
+        System.out.println("userphone "+this.userphone );
         String params = "&phone=" + URLEncoder.encode(this.userphone, "UTF-8") +
                 "&password=" +URLEncoder.encode(this.password, "UTF-8")+
                 "&action=" +URLEncoder.encode("updateInfo", "UTF-8")  +
@@ -357,8 +352,9 @@ public class MetroImservice extends Service implements Iappmanager {
         else return null;
     }
     public void MessageReceived(String from,String sentdt,String mType,String message){
-        String []name=databaseHandler.getContactName(from);
-        databaseHandler.addMessage(from,message,sentdt,"from",mType,"0");
+        DatabaseHandler db=new DatabaseHandler(this);
+        String []name=db.getContactName(from);
+        db.addMessage(from,message,sentdt,"from",mType,"0");
         Intent i=new Intent(TAKE_MESSAGE);
         i.putExtra(MessageInfo.FROM,from);
         i.putExtra(MessageInfo.SENDERNAME,name[0]);
@@ -366,11 +362,10 @@ public class MetroImservice extends Service implements Iappmanager {
         i.putExtra(MessageInfo.MESSAGE_TYPE,mType);
         i.putExtra(MessageInfo.MESSAGE_LIST,message);
         sendBroadcast(i);
-        if(MessageInfo.ACTIVEFRIEND_PHONE==null)
-        {
+        if(MessageInfo.ACTIVEFRIEND_PHONE==null) {
             ShowNotification(name[0],name[1],from,message);
         }
-
+        db.close();
     }
     public void decodeMessage(String jsonresult) {
         try{
@@ -516,7 +511,28 @@ public class MetroImservice extends Service implements Iappmanager {
             return id;
         else return "0";
     }
-
+    public String sendNoticeToStudent(String dept,String id,String msg,String type,String name){
+        String params="0";
+        try {
+            if(type!="text"){
+                msg=socketOperator.sendHttpFileUploadRequest(msg);
+                if(msg==null && msg=="")
+                    return "0";
+            }
+            params = "&phone=" + URLEncoder.encode(this.userphone, "UTF-8") +
+                     "&password=" + URLEncoder.encode(this.password, "UTF-8") +
+                     "&action=" +URLEncoder.encode("sendNotice", "UTF-8") +
+                    "&dept=" +URLEncoder.encode(dept, "UTF-8") +
+                    "&name=" +URLEncoder.encode(name, "UTF-8") +
+                     "&id=" +URLEncoder.encode(id, "UTF-8") +
+                    "&type=" +URLEncoder.encode(type, "UTF-8") +
+                    "&msg=" +URLEncoder.encode(msg, "UTF-8") +
+                     "&";
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return socketOperator.sendHttpRequest(params);
+    }
     @Override
     public String resetPassword(String Phone) throws UnsupportedEncodingException {
         password=this.generateRandomId();
