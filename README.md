@@ -19,5 +19,5 @@
   <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshort/s3.png" width="350"/>
   <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshort/s4.png" width="350"/>
   <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshort/s5.png" width="350"/>
-  <img src="https://github.com/AHTanvir/MetroIM/blob/master/screenshort/s6.png" width="350"/>
+
 </p>
