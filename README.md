@@ -3,7 +3,6 @@
  
  #Features
  
- 	User Registration:  If the user is a new, User must be able to register for the application.
 
 	User Login:  On installing the application or after logout, user must be prompted to login screen and to get access of this application user must login using valid phone number and password. If user skips this step, application should close.
 
